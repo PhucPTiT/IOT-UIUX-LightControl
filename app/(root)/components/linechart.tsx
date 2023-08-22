@@ -19,6 +19,7 @@ const font = Cedarville_Cursive({
 })
 
 const LineChart = ({chartData} : LineChartProps) => {
+  const isMobile = window.innerWidth <= 1024;
   return (
       <Line
         className="bg-primary/10 rounded-xl"
@@ -29,13 +30,13 @@ const LineChart = ({chartData} : LineChartProps) => {
               display: true,
               text: "Line Chart Follow Control",
               font: {
-                size: window.innerWidth <= 1024 ? 12 : 32,
+                size: isMobile ? 12 : 32,
                 family: font.className,
                 weight: "bold"
               }
             },
             legend: {
-              display: window.innerWidth <= 1024 ? false : true
+              display: isMobile? false : true
             }
           }
         }}
