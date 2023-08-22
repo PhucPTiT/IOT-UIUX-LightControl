@@ -1,3 +1,5 @@
+"use client"
+
 import { Cedarville_Cursive } from "next/font/google";
 import { Line } from "react-chartjs-2";
 
