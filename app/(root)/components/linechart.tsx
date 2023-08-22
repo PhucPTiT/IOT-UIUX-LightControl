@@ -1,5 +1,6 @@
 "use client"
 
+import useWindowSize from "@/app/hooks/useWindowSize";
 import { Cedarville_Cursive } from "next/font/google";
 import { Line } from "react-chartjs-2";
 
@@ -21,7 +22,8 @@ const font = Cedarville_Cursive({
 })
 
 const LineChart = ({chartData} : LineChartProps) => {
-  const isMobile = window.innerWidth <= 1024;
+  const sizeBrowser = useWindowSize();
+  const isMobile: boolean = sizeBrowser.width !== undefined && sizeBrowser.width < 1024;
   return (
       <Line
         className="bg-primary/10 rounded-xl"
