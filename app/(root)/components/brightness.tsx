@@ -4,16 +4,18 @@ import { getRandomBrightness } from "@/app/utils/random";
 import { cn } from "@/lib/utils";
 import { SunDim } from "lucide-react";
 import { useEffect, useState } from "react";
+interface BrightnessProps {
+    data: string,
+}
+const Brightness = ({data} : BrightnessProps) => {
+    const [brightness, setBrightness] = useState<number>(+data)
 
-const Brightness = () => {
-    const [brightness, setBrightness] = useState<number>(57)
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setBrightness(getRandomBrightness());
-        },5000)
-        return () => clearInterval(interval);
-    },[])
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         setBrightness(getRandomBrightness());
+    //     },5000)
+    //     return () => clearInterval(interval);
+    // },[])
     return (
         <div 
         
@@ -35,7 +37,7 @@ const Brightness = () => {
             )}
         >
             <SunDim width={120} height={120} color="#FFFF99"/>
-            <p className="text-6xl font-bold">{brightness} lux</p>
+            <p className="text-5xl font-bold">{brightness} lux</p>
             <p className="text-lg"> Độ Sáng</p>
         </div>
     );

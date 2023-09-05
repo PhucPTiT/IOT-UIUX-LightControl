@@ -5,14 +5,18 @@ import { cn } from "@/lib/utils";
 import {ThermometerSnowflakeIcon } from "lucide-react";
 import {useState,useEffect} from "react"
 
-const Temperature = () => {
-    const [temperature, setTemperature] = useState<number>(60)
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setTemperature(getRandomTemple());
-        },5000)
-        return () => clearInterval(interval);
-    },[])
+interface TemperatureProps {
+    data: string,
+} 
+
+const Temperature = ({data} : TemperatureProps) => {
+    const [temperature, setTemperature] = useState<number>(+data)
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         setTemperature(getRandomTemple());
+    //     },5000)
+    //     return () => clearInterval(interval);
+    // },[])
     return ( 
         <div className={cn(
             "flex flex-col items-center gap-2 bg-primary/10 px-2 py-4 cursor-pointer rounded-xl",
@@ -24,7 +28,7 @@ const Temperature = () => {
               ? "bg-blue-300 animate-pulse" : ""
           )}>
             <ThermometerSnowflakeIcon width={120} height={120} color="green"/>
-            <p className="text-6xl font-bold">{temperature} *C</p>
+            <p className="text-5xl font-bold">{temperature} *C</p>
             <p className="text-lg"> Nhiệt độ</p>
         </div>
     );

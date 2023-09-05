@@ -4,15 +4,18 @@ import { cn } from "@/lib/utils";
 import { DropletIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const Humidity = () => {
-    const [humidity, setHumidity] = useState<number>(57)
+interface HumidityProps {
+    data: string,
+}
+const Humidity = ({data} : HumidityProps) => {
+    const [humidity, setHumidity] = useState<number>(+data)
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setHumidity(getRandomHumity());
-        },5000)
-        return () => clearInterval(interval);
-    },[])
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         setHumidity(getRandomHumity());
+    //     },5000)
+    //     return () => clearInterval(interval);
+    // },[])
 
     return ( 
         <div 
@@ -34,7 +37,7 @@ const Humidity = () => {
           )}
         >
             <DropletIcon width={120} height={120} color="#6EC2F7"/>
-            <p className="text-6xl font-bold">{humidity} %</p>
+            <p className="text-5xl font-bold">{humidity} %</p>
             <p className="text-lg"> Độ Ẩm</p>
         </div>
     );

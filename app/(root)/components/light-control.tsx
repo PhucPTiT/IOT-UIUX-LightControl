@@ -17,16 +17,14 @@ const LightControl = () => {
             py-4
             flex 
             items-center 
+            justify-center
             gap-4
             cursor-pointer
             rounded-xl
             bg-primary/10
         ">
-            <div className="text-5xl font-bold flex-1 text-center text-[32px] md:text-5xl">
-                Control Light
-            </div>
             <div className="flex flex-col items-center gap-2">
-                <LucideLightbulb width={120} height={120} color={isOn? "pink" : "gray"}/>
+                <LucideLightbulb width={120} height={120} color={isOn? "Tan" : "gray"}/>
                 <Switch onClick={toggleSwitch}/>
             </div>
         </div>
