@@ -1,13 +1,13 @@
 "use client"
 
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRef, useState } from 'react';
 import Image from "next/image";
 import 'swiper/css';
 import 'swiper/css/effect-cube';
 import 'swiper/css/pagination';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCube, Pagination } from 'swiper/modules';
+import { Autoplay, EffectCube, Pagination } from 'swiper/modules';
 
 import './swiper.css';
 
@@ -15,34 +15,63 @@ const User = () => {
     return ( 
         <div className="w-full mt-8 flex items-center justify-center">
             <Card>
-                <CardHeader className="flex flex-row">
-                    <div>
-                    <Swiper
-                        effect={'cube'}
-                        grabCursor={true}
-                        cubeEffect={{
-                        shadow: true,
-                        slideShadows: true,
-                        shadowOffset: 20,
-                        shadowScale: 0.94,
-                        }}
-                        pagination={true}
-                        modules={[EffectCube, Pagination]}
-                        className="mySwiper"
-                    >
-                        <SwiperSlide>
-                        <img src="https://swiperjs.com/demos/images/nature-1.jpg" />
-                        </SwiperSlide>
-                        <SwiperSlide>
-                        <img src="https://swiperjs.com/demos/images/nature-2.jpg" />
-                        </SwiperSlide>
-                    </Swiper>
+                <CardHeader className="flex flex-row p-3">
+                    <div className="mr-4 translate-y-6">
+                        <Swiper
+                            effect={'cube'}
+                            grabCursor={true}
+                            cubeEffect={{
+                                shadow: false,
+                            }}
+                            loop = {true}
+                            autoplay = {{
+                                delay: 3000,
+                                disableOnInteraction: false,
+                            }}
+                            modules={[Autoplay, EffectCube, Pagination]}
+                            className="mySwiper"
+                        >
+                            <SwiperSlide>
+                                <img src="/logo.png" />
+                            </SwiperSlide>
+                            <SwiperSlide>
+                                <img src="/macgai.jpg" />
+                            </SwiperSlide>
+                        </Swiper>
+                        
                     </div>
                     <div>
-                        <CardTitle>Create project</CardTitle>
-                        <CardDescription>Deploy your new project in one-click.</CardDescription>
+                        <CardTitle>Học Viện</CardTitle>
+                        <CardDescription>Công nghệ Bưu chính Viễn thông</CardDescription>
+                        <div className="bg-red-400 w-full h-[2px] mt-1 rounded"></div>
+                        <div className="text-center text-red-500 font-semibold mt-1">THẺ SINH VIÊN</div>
                     </div>
                 </CardHeader>
+                <CardContent className="p-3 py-0 flex flex-row items-center gap-6 relative">
+                    <div>
+                        <p className="text-sm font-bold text-blue-800 mt-1 text-center">Mã SV</p>
+                        <p className="text-sm font-semibold text-red-500">B20DCCN511</p>
+                    </div>
+                    <div className="translate-y-[-20px]">
+                        <p>
+                            <span className="text-xs font-bold">Họ và tên: </span>
+                            <span className="text-xs text-blue-800 font-bold">Nguyễn Đoàn Đức Phúc</span>
+                        </p>
+                        <p>
+                            <span className="text-xs font-bold">Sinh ngày: </span>
+                            <span className="text-xs text-blue-800 font-bold">18/08/2002</span>
+                        </p>
+                        <p>
+                            <span className="text-xs font-bold">Hộ khẩu TT: </span>
+                            <span className="text-xs text-blue-800 font-bold">Thái Bình</span>
+                        </p>
+                        <p>
+                            <span className="text-xs font-bold">Ngành: </span>
+                            <span className="text-xs text-blue-800 font-bold">Công nghệ thông tin</span>
+                        </p>
+                    </div>
+                    <Image src="/logo.png" alt="" width={200} height={200} className="absolute opacity-40 top-[-50px] right-[20px]"/>
+                </CardContent>
             </Card>
         </div>
     );
