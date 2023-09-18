@@ -3,12 +3,17 @@ import { Switch } from "@/components/ui/switch";
 import {LucideLightbulb } from "lucide-react";
 import { useState } from "react";
 
-const LightControl = () => {
-    const [isOn, setIsOn] = useState<boolean>(false)
+interface LightControlProps {
+    status: boolean,
+    onHandle: () => void
+}
 
-    const toggleSwitch = () => {
-        setIsOn((prevValue) => !prevValue)
-    }
+const LightControl = ({status, onHandle}: LightControlProps) => {
+    const [isOn, setIsOn] = useState<boolean>(status)
+
+    // const toggleSwitch = () => {
+    //     setIsOn((prevValue) => !prevValue)
+    // }
 
     return (
         <div className="
@@ -24,8 +29,8 @@ const LightControl = () => {
             bg-primary/10
         ">
             <div className="flex flex-col items-center gap-2">
-                <LucideLightbulb width={120} height={120} color={isOn? "Tan" : "gray"}/>
-                <Switch onClick={toggleSwitch}/>
+                <LucideLightbulb width={120} height={120} color={status? "Tan" : "gray"}/>
+                <Switch onClick={onHandle}/>
             </div>
         </div>
     );

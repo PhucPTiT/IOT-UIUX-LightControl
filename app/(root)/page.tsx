@@ -5,6 +5,7 @@ import FanControl from "./components/fan-control";
 import Humidity from "./components/humidity";
 import LightControl from "./components/light-control";
 import Temperature from "./components/temperature";
+import Control from "./components/control";
 
 export default async function Home() {
     const dataLog = await prismadb.dataLog.findFirst();
@@ -20,8 +21,7 @@ export default async function Home() {
               <ChatControl/>
           </div>
           <div className="flex flex-col gap-4 col-span-1">
-              <LightControl/>
-              <FanControl/>
+              <Control/>
           </div>
         </div>
       </div>

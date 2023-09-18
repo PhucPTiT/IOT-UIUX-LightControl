@@ -3,12 +3,17 @@ import { Switch } from "@/components/ui/switch";
 import { Fan } from "lucide-react";
 import { useState } from "react";
 
-const FanControl = () => {
-    const [isOn, setIsOn] = useState<boolean>(false)
+interface FanControlProps {
+    status: boolean,
+    onHandle: () => void
+}
 
-    const toggleSwitch = () => {
-        setIsOn((prevValue) => !prevValue)
-    }
+const FanControl = ({status, onHandle}:FanControlProps) => {
+    // const [isOn, setIsOn] = useState<boolean>(status)
+
+    // const toggleSwitch = () => {
+    //     setIsOn((prevValue) => !prevValue)
+    // }
     return (
         <div className="
             flex-1
@@ -23,8 +28,8 @@ const FanControl = () => {
             bg-primary/10
         ">
             <div className="flex flex-col items-center gap-2">
-                <Fan width={120} height={120} color={isOn ? "Salmon" : "gray"} className={isOn ? "fan-rotating" : ""}/>
-                <Switch onClick={toggleSwitch}/>
+                <Fan width={120} height={120} color={status ? "Salmon" : "gray"} className={status ? "fan-rotating" : ""}/>
+                <Switch onClick={onHandle}/>
             </div>
         </div>
     );
