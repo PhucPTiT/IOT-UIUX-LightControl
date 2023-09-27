@@ -14,7 +14,7 @@ import './swiper.css';
 const User = () => {
     return ( 
         <div className="w-full mt-8 flex items-center justify-center">
-            <Card>
+            <Card className="bg-gray-100">
                 <CardHeader className="flex flex-row p-3">
                     <div className="mr-4 translate-y-6">
                         <Swiper
@@ -41,7 +41,7 @@ const User = () => {
                         
                     </div>
                     <div>
-                        <CardTitle>Học Viện</CardTitle>
+                        <CardTitle className="text-blue-600">Học Viện</CardTitle>
                         <CardDescription>Công nghệ Bưu chính Viễn thông</CardDescription>
                         <div className="bg-red-400 w-full h-[2px] mt-1 rounded"></div>
                         <div className="text-center text-red-500 font-semibold mt-1">THẺ SINH VIÊN</div>

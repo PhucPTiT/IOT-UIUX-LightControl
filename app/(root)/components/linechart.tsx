@@ -9,7 +9,7 @@ interface LineChartProps {
         labels: string[]; // Use string[] instead of label: string[]
         datasets: {
             label: string,
-            data: number[];
+            data: string[];
             backgroundColor: string[];
             borderColor: string;
             borderWidth: number;

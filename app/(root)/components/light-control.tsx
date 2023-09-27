@@ -30,7 +30,7 @@ const LightControl = ({status, onHandle}: LightControlProps) => {
         ">
             <div className="flex flex-col items-center gap-2">
                 <LucideLightbulb width={120} height={120} color={status? "Tan" : "gray"}/>
-                <Switch onClick={onHandle}/>
+                <Switch checked={status} onClick={onHandle}/>
             </div>
         </div>
     );

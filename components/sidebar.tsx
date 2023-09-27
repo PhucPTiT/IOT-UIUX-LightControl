@@ -1,6 +1,6 @@
 "use client"
 import {usePathname, useRouter} from "next/navigation"
-import { FileText, Home, UserCircle2 } from "lucide-react";
+import { Database, FileText, Home, UserCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const routes = [
@@ -13,6 +13,11 @@ const routes = [
         icon: FileText,
         href: "/log",
         label: "Log"
+    },
+    {
+        icon: Database,
+        href: "/data",
+        label: "Data",
     },
     {
         icon: UserCircle2,

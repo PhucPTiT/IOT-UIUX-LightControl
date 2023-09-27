@@ -29,7 +29,7 @@ const FanControl = ({status, onHandle}:FanControlProps) => {
         ">
             <div className="flex flex-col items-center gap-2">
                 <Fan width={120} height={120} color={status ? "Salmon" : "gray"} className={status ? "fan-rotating" : ""}/>
-                <Switch onClick={onHandle}/>
+                <Switch checked={status} onClick={onHandle}/>
             </div>
         </div>
     );

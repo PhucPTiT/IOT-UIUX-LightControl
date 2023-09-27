@@ -1,22 +1,11 @@
 "use client"
-import { getRandomHumity } from "@/app/utils/random";
 import { cn } from "@/lib/utils";
 import { DropletIcon } from "lucide-react";
-import { useEffect, useState } from "react";
 
 interface HumidityProps {
     data: string,
 }
 const Humidity = ({data} : HumidityProps) => {
-    const [humidity, setHumidity] = useState<number>(+data)
-
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         setHumidity(getRandomHumity());
-    //     },5000)
-    //     return () => clearInterval(interval);
-    // },[])
-
     return ( 
         <div 
             className={cn(
@@ -29,15 +18,15 @@ const Humidity = ({data} : HumidityProps) => {
             py-4 
             cursor-pointer
             rounded-xl`,
-            humidity <5 
+            +data <5 
               ? "bg-red-400 animate-pulse"
-              : humidity < 20
+              : +data < 20
               ? "bg-orange-400 animate-pulse" 
               : ""
           )}
         >
             <DropletIcon width={120} height={120} color="#6EC2F7"/>
-            <p className="text-5xl font-bold">{humidity} %</p>
+            <p className="text-5xl font-bold">{data} %</p>
             <p className="text-lg"> Độ Ẩm</p>
         </div>
     );
