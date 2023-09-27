@@ -6,6 +6,7 @@ import Temperature from "./temperature";
 import { useEffect, useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import axios from "axios";
+import { ToastAction } from "@/components/ui/toast";
 
 interface DataLog {
     temp: string,
@@ -22,9 +23,17 @@ const Data = () => {
     }) ;
     useEffect(() => {
       const fetchAPI = async() => {
-        const response = await axios.get("http://localhost:8081/api/data/first")
-        const data = response.data;
-        setDataLog(data)
+        try {
+          const response = await axios.get("http://localhost:8081/api/data/first")
+          const data = response.data;
+          setDataLog(data)
+        } catch (error) {
+          toast({
+            variant: "destructive",
+            title: "Something went wrong",
+            description: "Error call api data first"
+          })
+        }
       }
       fetchAPI();
     }, [])
@@ -52,10 +61,15 @@ const Data = () => {
         } catch (error) {
           toast({
             variant: "destructive",
+            title: "Some thing went wrong",
             description: "Error connect get datasensor",
+            action: <ToastAction altText="Try again">Try again</ToastAction>,
           });
         }
       };
+      return () => {
+        eventSource.close();
+      }
     }, []);
     return ( 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">

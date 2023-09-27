@@ -16,6 +16,8 @@ import Pagination from "@/components/pagination";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { RefreshCcw } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 const DataLog = () => {
     const [reload, setReload] = useState<boolean>(false)
@@ -25,18 +27,32 @@ const DataLog = () => {
 
     useEffect(() => {
       const fetchData = async() => {
-        const response = await axios.get(`http://localhost:8081/api/data?page=${page - 1}&size=30`);
-        setTotalPage(response.data.totalPages)
-        setData(response.data.content)
+        try {
+          const response = await axios.get(`http://localhost:8081/api/data?page=${page - 1}&size=30`);
+          setTotalPage(response?.data.totalPages)
+          setData(response?.data.content)
+        } catch(error) {
+          console.error(error);
+          toast({
+            variant: "destructive",
+            title: "Something went wrong",
+            description: "Error call API get data sensor log",
+            action: <ToastAction altText="Try again">Try again</ToastAction>,
+          });
+          setData([]);
+        }
       }
 
       fetchData();
+      return () => {
+      
+      }
     }, [page, reload])
 
     const handleSwithPage = (pageswitch: number) => {
       setPage(pageswitch);
     }
-
+    console.log(data)
     return (
         <>
           <Button className="fixed right-20 top-3 z-50" onClick={() => {setReload(!reload)}}>
@@ -56,7 +72,7 @@ const DataLog = () => {
             </TableHeader>
             <TableBody>
               {
-                data.length >= 0 ? 
+                data.length > 0 ? 
                 (
                   <>
                     {data.map((item) => (
@@ -78,7 +94,7 @@ const DataLog = () => {
                   </>
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4}>Không có dữ liệu</TableCell>
+                    <TableCell colSpan={5}>Không có dữ liệu</TableCell>
                   </TableRow>
                 )
               }

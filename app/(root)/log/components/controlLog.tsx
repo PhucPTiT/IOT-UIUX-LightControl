@@ -13,6 +13,7 @@ import { toast } from "@/components/ui/use-toast";
 import axios from "axios";
 import { format } from "date-fns";
 import { ChevronDown } from "lucide-react";
+import { ToastAction } from "@/components/ui/toast";
 
 interface ControlLogItem {
   id: number;
@@ -36,13 +37,18 @@ const ControlLog = () => {
         console.error(error);
         toast({
           variant: "destructive",
-          description: "Something went wrong",
+          title: "Something went wrong",
+          description: "Error get data control log",
+          action: <ToastAction altText="Try again">Try again</ToastAction>,
         });
         setControlLog([]);
       }
     };
 
     fetchData();
+    return () => {
+      
+    }
   }, []);
 
 
