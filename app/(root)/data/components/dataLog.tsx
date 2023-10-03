@@ -55,8 +55,8 @@ const DataLog = () => {
     console.log(data)
     return (
         <>
-          <Button className="fixed right-20 top-3 z-50" onClick={() => {setReload(!reload)}}>
-            <span className="mr-1">Cập nhật</span>
+          <Button className="w-12 h-8 fixed right-16 md:right-20 top-4 md:top-3 z-50 " onClick={() => {setReload(!reload)}}>
+            <span className="md:block hidden mr-1">Cập nhật</span>
             <RefreshCcw/>
           </Button>
           <Table className="overflow-x-auto w-full">

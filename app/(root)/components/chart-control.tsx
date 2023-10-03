@@ -98,7 +98,7 @@ const ChartControl = () => {
       },
       {
         label: "Brighness",
-        data: data.map((item) => item.brightness),
+        data: data.map((item) => (parseFloat(item.brightness)).toFixed(2)),
         backgroundColor: [
           "#FFFF33"
         ],
