@@ -18,12 +18,14 @@ import { Button } from "@/components/ui/button";
 import { RefreshCcw } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import { Filter } from "@/components/filter";
 
 const DataLog = () => {
     const [reload, setReload] = useState<boolean>(false)
     const [page,setPage] = useState<number>(1);
     const [data, setData] = useState<DataItem[]>([])
     const [totalPage, setTotalPage] = useState<number>(0);
+    
 
     useEffect(() => {
       const fetchData = async() => {
@@ -55,7 +57,7 @@ const DataLog = () => {
     console.log(data)
     return (
         <>
-          <Button className="w-12 h-8 fixed right-16 md:right-20 top-4 md:top-3 z-50 " onClick={() => {setReload(!reload)}}>
+          <Button className="w-10 m-0 p-0 h-8 md:w-auto md:h-auto fixed right-[60px] md:right-20 top-4 md:top-3 z-50 " onClick={() => {setReload(!reload)}}>
             <span className="md:block hidden mr-1">Cập nhật</span>
             <RefreshCcw/>
           </Button>
@@ -67,7 +69,12 @@ const DataLog = () => {
                 <TableHead>Temp</TableHead>
                 <TableHead>Humidity</TableHead>
                 <TableHead>Brightness</TableHead>
-                <TableHead className="text-right">Time</TableHead>
+                <TableHead className="text-right">
+                  <div className="flex justify-end items-center gap-1">
+                    <span className="">Time</span>
+                    {/* <Filter/> */}
+                  </div>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

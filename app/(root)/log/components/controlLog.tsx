@@ -14,6 +14,8 @@ import axios from "axios";
 import { format } from "date-fns";
 import { ChevronDown } from "lucide-react";
 import { ToastAction } from "@/components/ui/toast";
+import { Filter } from "@/components/filter";
+import { DateRange } from "react-day-picker";
 
 interface ControlLogItem {
   id: number;
@@ -25,6 +27,8 @@ interface ControlLogItem {
 const ControlLog = () => {
   const [controlLog, setControlLog] = useState<ControlLogItem[]>([]);
   const [displayedLog, setDisplayedLog] = useState<ControlLogItem[]>([]);
+  const [filterLog, setFilterLog] = useState<ControlLogItem[]>([])
+  const [date, setDate] = useState<DateRange | undefined> (undefined);
   const itemsPerPage = 5;
 
   useEffect(() => {
@@ -53,8 +57,34 @@ const ControlLog = () => {
 
 
   const handleShowMoreClick = () => {
-    setDisplayedLog(controlLog.slice(0,  displayedLog.length + itemsPerPage));
+    setDisplayedLog(filterLog.slice(0,  displayedLog.length + itemsPerPage));
   };
+
+  const handleFilterClick = (datechange: DateRange | undefined) => {
+    setDate(datechange)
+    console.log(datechange)
+  }
+  
+  const isLogWithinDateRange = (log: ControlLogItem) => {
+    if(!date?.from || !date?.to || !date) 
+      return true
+    const logTime = new Date(log.time);
+    const startDate = new Date(date.from);
+    const endDate = new Date(date.to)
+
+    const startDay = startDate.getDate();
+    const endDay = endDate.getDate();
+
+    if (startDate.getTime() === endDate.getTime()) {
+    return logTime >= startDate && logTime <= new Date(endDate.setDate(endDay + 1));
+  }
+    return logTime >= startDate && logTime < new Date(endDate.setDate(endDay + 1));
+  }
+  useEffect(() => {
+    setFilterLog(controlLog.filter((item) => isLogWithinDateRange(item)));
+    setDisplayedLog(controlLog.filter((item) => isLogWithinDateRange(item)).slice(0, 5))
+  }, [date])
+
   return (
     <div>
       <Table>
@@ -64,7 +94,12 @@ const ControlLog = () => {
             <TableHead className="w-[100px]">ID</TableHead>
             <TableHead>Light</TableHead>
             <TableHead>Fan</TableHead>
-            <TableHead className="text-right">Time</TableHead>
+            <TableHead className="text-right">
+              <div className="flex justify-end items-center gap-1">
+                <span className="">Time</span>
+                <Filter onHandle={handleFilterClick}/>
+              </div>
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -83,11 +118,12 @@ const ControlLog = () => {
             <TableRow>
               <TableCell colSpan={4}>Không có dữ liệu</TableCell>
             </TableRow>
+            
           )}
         </TableBody>
       </Table>
         <div className="w-full flex justify-center mt-1 text-gray-400">
-          {controlLog.length > displayedLog.length && (
+          {filterLog.length > displayedLog.length && (
             <button onClick={handleShowMoreClick} className="flex flex-row  hover:text-gray-300">
               <span>Xem thêm</span>
               <ChevronDown />
