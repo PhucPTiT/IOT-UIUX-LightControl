@@ -34,7 +34,7 @@ const ControlLog = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:8081/api/controllog");
+        const response = await axios.get("https://java-iot-be-production.up.railway.app/api/controllog");
         setControlLog(response.data);
         setDisplayedLog(response.data.slice(0, 5))
       } catch (error) {
@@ -62,7 +62,6 @@ const ControlLog = () => {
 
   const handleFilterClick = (datechange: DateRange | undefined) => {
     setDate(datechange)
-    console.log(datechange)
   }
   
   const isLogWithinDateRange = (log: ControlLogItem) => {
@@ -76,14 +75,14 @@ const ControlLog = () => {
     const endDay = endDate.getDate();
 
     if (startDate.getTime() === endDate.getTime()) {
-    return logTime >= startDate && logTime <= new Date(endDate.setDate(endDay + 1));
-  }
+      return logTime >= startDate && logTime <= new Date(endDate.setDate(endDay + 1));
+    }
     return logTime >= startDate && logTime < new Date(endDate.setDate(endDay + 1));
   }
   useEffect(() => {
     setFilterLog(controlLog.filter((item) => isLogWithinDateRange(item)));
     setDisplayedLog(controlLog.filter((item) => isLogWithinDateRange(item)).slice(0, 5))
-  }, [date])
+  }, [date, controlLog])
 
   return (
     <div>

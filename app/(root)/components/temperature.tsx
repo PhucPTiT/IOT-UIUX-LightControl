@@ -10,7 +10,7 @@ interface TemperatureProps {
 const Temperature = ({data} : TemperatureProps) => {
     return ( 
         <div className={cn(
-            "flex flex-col items-center gap-2 bg-primary/10 px-2 py-4 cursor-pointer rounded-xl",
+            "flex flex-col items-center gap-2 bg-primary/10 px-2 py-4 cursor-pointer rounded-xl hover-zoom",
             +data > 90
               ? "bg-red-400 animate-pulse" 
               : +data > 40

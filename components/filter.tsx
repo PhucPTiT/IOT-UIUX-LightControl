@@ -23,7 +23,7 @@ export function Filter({ onHandle,className, ...props }: FilterProps) {
     <div className={cn("grid gap-2", className)}>
       <Popover>
         <PopoverTrigger asChild>
-            <FilterIcon className="" />
+            <FilterIcon className={date && "text-primary"} />
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar

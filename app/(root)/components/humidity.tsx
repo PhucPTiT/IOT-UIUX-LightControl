@@ -17,7 +17,8 @@ const Humidity = ({data} : HumidityProps) => {
             px-2 
             py-4 
             cursor-pointer
-            rounded-xl`,
+            rounded-xl
+            hover-zoom`,
             +data <5 
               ? "bg-red-400 animate-pulse"
               : +data < 20

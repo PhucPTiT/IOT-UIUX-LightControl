@@ -24,7 +24,7 @@ const Data = () => {
     useEffect(() => {
       const fetchAPI = async() => {
         try {
-          const response = await axios.get("http://localhost:8081/api/data/first")
+          const response = await axios.get("https://java-iot-be-production.up.railway.app/api/data/first")
           const data = response.data;
           setDataLog(data)
         } catch (error) {
@@ -38,7 +38,7 @@ const Data = () => {
       fetchAPI();
     }, [])
     useEffect(() => {
-      const eventSource = new EventSource('http://localhost:8081/sse/connect');
+      const eventSource = new EventSource('https://java-iot-be-production.up.railway.app/sse/connect');
       eventSource.onmessage = (event) => {
         try {
           const newData = JSON.parse(event.data);
@@ -47,7 +47,7 @@ const Data = () => {
           // if (newData === 'RECONNECT') {
           //   setReconnecting(true);
           //   eventSource.close(); 
-          //   const newEventSource = new EventSource('http://localhost:8081/sse/connect');
+          //   const newEventSource = new EventSource('https://java-iot-be-production.up.railway.app/sse/connect');
           //   newEventSource.onmessage = (newEvent) => {
           //     try {
           //       const newData = JSON.parse(newEvent.data);

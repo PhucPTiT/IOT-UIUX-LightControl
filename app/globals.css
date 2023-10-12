@@ -102,3 +102,12 @@
 .animate-pulse {
   animation: pulse 1s infinite;
 }
+
+
+.hover-zoom {
+  transition: transform 0.3s ease; 
+}
+
+.hover-zoom:hover {
+  transform: scale(1.05);
+}

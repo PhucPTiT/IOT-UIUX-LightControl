@@ -16,7 +16,8 @@ const Brightness = ({data} : BrightnessProps) => {
                 px-2 
                 py-4 
                 cursor-pointer
-                rounded-xl`,
+                rounded-xl
+                hover-zoom`,
                 +data > 1000 
                 ? "bg-red-400 animate-pulse" 
                 : +data > 500

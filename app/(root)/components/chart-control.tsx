@@ -37,7 +37,7 @@ const ChartControl = () => {
   useEffect(() => {
     const fetchData = async() => {
       try {
-        const response = await axios.get('http://localhost:8081/chartSSE/first');
+        const response = await axios.get('https://java-iot-be-production.up.railway.app/chartSSE/first');
         response.data && setData(response.data)
       }
       catch(error) {
@@ -56,7 +56,7 @@ const ChartControl = () => {
     }
   }, [])
   useEffect(() => {
-    const eventSource = new EventSource('http://localhost:8081/chartSSE/data');
+    const eventSource = new EventSource('https://java-iot-be-production.up.railway.app/chartSSE/data');
     eventSource.onmessage = (event) => {
       try {
         const newData = JSON.parse(event.data);
