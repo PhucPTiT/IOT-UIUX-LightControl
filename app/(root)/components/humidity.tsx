@@ -23,7 +23,7 @@ const Humidity = ({data} : HumidityProps) => {
               ? "bg-red-400 animate-pulse"
               : +data < 60
               ? "bg-orange-400 animate-pulse" 
-              : ""
+              : "bg-green-400 animate-pulse"
           )}
         >
             <DropletIcon width={120} height={120} color="#6EC2F7"/>

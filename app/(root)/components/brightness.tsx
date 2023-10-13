@@ -22,7 +22,7 @@ const Brightness = ({data} : BrightnessProps) => {
                 ? "bg-red-400 animate-pulse" 
                 : +data > 50
                 ? "bg-orange-400 animate-pulse" 
-                : ""
+                : "bg-yellow-300"
             )}
         >
             <SunDim width={120} height={120} color="#FFFF99"/>
