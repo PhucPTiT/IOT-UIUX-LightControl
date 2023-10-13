@@ -11,11 +11,11 @@ const Temperature = ({data} : TemperatureProps) => {
     return ( 
         <div className={cn(
             "flex flex-col items-center gap-2 bg-primary/10 px-2 py-4 cursor-pointer rounded-xl hover-zoom",
-            +data > 90
+            +data > 40
               ? "bg-red-400 animate-pulse" 
-              : +data > 40
+              : +data > 30
               ? "bg-orange-400 animate-pulse" 
-              : +data < 0
+              : +data < 0 
               ? "bg-blue-300 animate-pulse" : ""
           )}>
             <ThermometerSnowflakeIcon width={120} height={120} color="green"/>
