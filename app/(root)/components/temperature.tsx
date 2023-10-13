@@ -16,7 +16,7 @@ const Temperature = ({data} : TemperatureProps) => {
               : +data > 30
               ? "bg-orange-400 animate-pulse" 
               : +data < 0 
-              ? "bg-blue-400 animate-pulse" : "bg-blue-300 animate-pulse"
+              ? "bg-blue-400 animate-pulse" : "bg-blue-300"
           )}>
             <ThermometerSnowflakeIcon width={120} height={120} color="green"/>
             <p className="text-5xl font-bold">{data} *C</p>
