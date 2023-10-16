@@ -15,7 +15,7 @@ import { DataItem } from "../../components/chart-control";
 import Pagination from "@/components/pagination";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { RefreshCcw } from "lucide-react";
+import { ChevronDown, ChevronUp, RefreshCcw } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { Filter } from "@/components/filter";
@@ -27,10 +27,51 @@ const DataLog = () => {
     const [data, setData] = useState<DataItem[]>([])
     const [totalPage, setTotalPage] = useState<number>(0);
     const [date, setDate] = useState<DateRange | undefined> (undefined);
+    const [sortColumn, setSortColumn] = useState<string>("");
+    const [sortDirection, setSortDirection] = useState<"asc"|"desc">("asc");
 
     const handleFilterClick = (datechange: DateRange | undefined) => {
       setDate(datechange)
     }    
+
+    const handleSort = (column: string) => {
+      if(sortColumn === column) {
+        setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+      } else {
+        setSortColumn(column);
+        setSortDirection("asc");
+      }
+    }
+
+    const handleSortedData = (data: DataItem[]) => {
+      let sortedData = data;
+      if (sortColumn === "temp") {
+        sortedData = data.sort((a, b) => {
+            if (sortDirection === "asc") {
+                return parseFloat(a.temp) - parseFloat(b.temp);
+            } else {
+                return parseFloat(b.temp) - parseFloat(a.temp);
+            }
+        });
+      } else if (sortColumn === "humidity") {
+          sortedData = data.sort((a, b) => {
+              if (sortDirection === "asc") {
+                  return parseFloat(a.humidity) - parseFloat(b.humidity);
+              } else {
+                  return parseFloat(b.humidity) - parseFloat(a.humidity);
+              }
+          });
+      } else if (sortColumn === "brightness") {
+          sortedData = data.sort((a, b) => {
+              if (sortDirection === "asc") {
+                  return parseInt(a.brightness, 10) - parseInt(b.brightness, 10);
+              } else {
+                  return parseInt(b.brightness, 10) - parseInt(a.brightness, 10);
+              }
+          });
+      }
+      setData(sortedData);
+    }
 
     useEffect(() => {
       const fetchData = async() => {
@@ -38,7 +79,7 @@ const DataLog = () => {
           try {
             const response = await axios.get(`https://java-iot-be-production.up.railway.app/api/data?page=${page - 1}&size=30`);
             setTotalPage(response?.data.totalPages)
-            setData(response?.data.content)
+            handleSortedData(response?.data.content)
           } catch(error) {
             console.error(error);
             toast({
@@ -59,7 +100,7 @@ const DataLog = () => {
             
             const response = await axios.get(`https://java-iot-be-production.up.railway.app/api/data?page=${page - 1}&size=30&sd=${formatSd}&ed=${formatEd}`);
             setTotalPage(response?.data.totalPages)
-            setData(response?.data.content)
+            handleSortedData(response?.data.content)
           } catch(error) {
             console.error(error);
             toast({
@@ -78,7 +119,7 @@ const DataLog = () => {
       return () => {
       
       }
-    }, [page, reload, date])
+    }, [page, reload, date, sortColumn, sortDirection])
 
     const handleSwithPage = (pageswitch: number) => {
       setPage(pageswitch);
@@ -94,9 +135,36 @@ const DataLog = () => {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[100px]">ID</TableHead>
-                <TableHead>Temp</TableHead>
-                <TableHead>Humidity</TableHead>
-                <TableHead>Brightness</TableHead>
+                <TableHead
+                  onClick={() => handleSort("temp")}
+                  className="pointer-events-auto"
+                >
+                  <div className="flex flex-row">
+                    <p>Temp</p>
+                    {sortColumn === "temp" && sortDirection === "asc" && <ChevronUp />}
+                    {sortColumn === "temp" && sortDirection === "desc" && <ChevronDown />}
+                  </div>
+                </TableHead>
+                <TableHead
+                  onClick={() => handleSort("humidity")}
+                  className="pointer-events-auto"
+                >
+                  <div className="flex flex-row">
+                    <p>Humidity</p>
+                    {sortColumn === "humidity" && sortDirection === "asc" && <ChevronUp />}
+                    {sortColumn === "humidity" && sortDirection === "desc" && <ChevronDown />}
+                  </div>
+                </TableHead>
+                <TableHead
+                  onClick={() => handleSort("brightness")}
+                  className="pointer-events-auto"
+                >
+                  <div className="flex flex-row">
+                    <p>Brightness</p>
+                    {sortColumn === "brightness" && sortDirection === "asc" && <ChevronUp />}
+                    {sortColumn === "brightness" && sortDirection === "desc" && <ChevronDown />}
+                  </div>
+                </TableHead>
                 <TableHead className="text-right">
                   <div className="flex justify-end items-center gap-1">
                     <span className="">Time</span>
@@ -115,7 +183,7 @@ const DataLog = () => {
                         <TableCell className="font-medium">{item.id}</TableCell>
                         <TableCell className="whitespace-nowrap">{item.temp} *C</TableCell>
                         <TableCell>{item.humidity} %</TableCell>
-                        <TableCell>{item.brightness}K lux</TableCell>
+                        <TableCell>{item.brightness} lux</TableCell>
                         <TableCell className="text-right">
                           {item.time && format(new Date(item.time), "dd/MM/yyyy HH:mm:ss")}
                         </TableCell>
