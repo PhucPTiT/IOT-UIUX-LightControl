@@ -16,6 +16,7 @@ import { ChevronDown } from "lucide-react";
 import { ToastAction } from "@/components/ui/toast";
 import { Filter } from "@/components/filter";
 import { DateRange } from "react-day-picker";
+import { ComboboxDemo } from "./comboBox";
 
 interface ControlLogItem {
   id: number;
@@ -29,6 +30,8 @@ const ControlLog = () => {
   const [displayedLog, setDisplayedLog] = useState<ControlLogItem[]>([]);
   const [filterLog, setFilterLog] = useState<ControlLogItem[]>([])
   const [date, setDate] = useState<DateRange | undefined> (undefined);
+  const [fanStatus, setFanStatus] = useState<"on" | "off" | ""> ("");
+  const [lightStatus, setLightStatus] = useState<"on" | "off" | ""> ("");
   const itemsPerPage = 5;
 
   useEffect(() => {
@@ -75,9 +78,10 @@ const ControlLog = () => {
     const endDay = endDate.getDate();
 
     if (startDate.getTime() === endDate.getTime()) {
-      return logTime >= startDate && logTime <= new Date(endDate.setDate(endDay + 1));
+      return logTime >= startDate && logTime <= new Date(endDate.setDate(endDay + 1)) &&
+      (lightStatus === "" || log.lightStatus === (lightStatus === "on"));
     }
-    return logTime >= startDate && logTime < new Date(endDate.setDate(endDay + 1));
+    return logTime >= startDate && logTime < new Date(endDate.setDate(endDay + 1)) && (lightStatus === "" || log.lightStatus === (lightStatus === "on"));;
   }
   useEffect(() => {
     setFilterLog(controlLog.filter((item) => isLogWithinDateRange(item)));
@@ -91,8 +95,18 @@ const ControlLog = () => {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">ID</TableHead>
-            <TableHead>Light</TableHead>
-            <TableHead>Fan</TableHead>
+            <TableHead>
+              <div className="flex items-center">
+                <p>Light</p>
+                <ComboboxDemo/>
+              </div>
+            </TableHead>
+            <TableHead>
+              <div className="flex items-center">
+                <p>Fan</p>
+                <ComboboxDemo/>
+              </div>
+            </TableHead>
             <TableHead className="text-right">
               <div className="flex justify-end items-center gap-1">
                 <span className="">Time</span>

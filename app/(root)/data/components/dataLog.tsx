@@ -137,7 +137,7 @@ const DataLog = () => {
                 <TableHead className="w-[100px]">ID</TableHead>
                 <TableHead
                   onClick={() => handleSort("temp")}
-                  className="pointer-events-auto"
+                  className="cursor-pointer"
                 >
                   <div className="flex flex-row">
                     <p>Temp</p>
@@ -147,7 +147,7 @@ const DataLog = () => {
                 </TableHead>
                 <TableHead
                   onClick={() => handleSort("humidity")}
-                  className="pointer-events-auto"
+                  className="cursor-pointer"
                 >
                   <div className="flex flex-row">
                     <p>Humidity</p>
@@ -157,7 +157,7 @@ const DataLog = () => {
                 </TableHead>
                 <TableHead
                   onClick={() => handleSort("brightness")}
-                  className="pointer-events-auto"
+                  className="cursor-pointer"
                 >
                   <div className="flex flex-row">
                     <p>Brightness</p>
