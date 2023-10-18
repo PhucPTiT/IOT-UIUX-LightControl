@@ -1,4 +1,3 @@
-import { Filter } from "@/components/filter";
 import ChatControl from "./components/chart-control";
 import Control from "./components/control";
 import Data from "./components/data";

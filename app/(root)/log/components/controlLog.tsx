@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import axios from "axios";
 import { format } from "date-fns";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, CloudCog } from "lucide-react";
 import { ToastAction } from "@/components/ui/toast";
 import { Filter } from "@/components/filter";
 import { DateRange } from "react-day-picker";
@@ -66,27 +66,53 @@ const ControlLog = () => {
   const handleFilterClick = (datechange: DateRange | undefined) => {
     setDate(datechange)
   }
+
+  const handleLightStatusChange = (status: "on" | "off" | "") => {
+    setLightStatus(status)
+  }
+
+  const handleFanStatusChange = (status: "on" | "off" | "") =>  {
+    setFanStatus(status)
+  }
   
   const isLogWithinDateRange = (log: ControlLogItem) => {
-    if(!date?.from || !date?.to || !date) 
-      return true
     const logTime = new Date(log.time);
+    
+    // Kiểm tra nếu ngày không được chỉ định hoặc ngày không hợp lệ
+    if (!date || !date.from || !date.to) {
+      return (
+        (lightStatus === "" || log.lightStatus === (lightStatus === "on")) &&
+        (fanStatus === "" || log.fanStatus === (fanStatus === "on"))
+      );
+    }
+  
     const startDate = new Date(date.from);
-    const endDate = new Date(date.to)
-
+    const endDate = new Date(date.to);
+  
     const startDay = startDate.getDate();
     const endDay = endDate.getDate();
-
+  
     if (startDate.getTime() === endDate.getTime()) {
-      return logTime >= startDate && logTime <= new Date(endDate.setDate(endDay + 1)) &&
-      (lightStatus === "" || log.lightStatus === (lightStatus === "on"));
+      return (
+        logTime >= startDate &&
+        logTime <= new Date(endDate.setDate(endDay + 1)) &&
+        (lightStatus === "" || log.lightStatus === (lightStatus === "on")) &&
+        (fanStatus === "" || log.fanStatus === (fanStatus === "on"))
+      );
     }
-    return logTime >= startDate && logTime < new Date(endDate.setDate(endDay + 1)) && (lightStatus === "" || log.lightStatus === (lightStatus === "on"));;
+  
+    return (
+      logTime >= startDate &&
+      logTime < new Date(endDate.setDate(endDay + 1)) &&
+      (lightStatus === "" || log.lightStatus === (lightStatus === "on")) &&
+      (fanStatus === "" || log.fanStatus === (fanStatus === "on"))
+    );
   }
+  
   useEffect(() => {
     setFilterLog(controlLog.filter((item) => isLogWithinDateRange(item)));
     setDisplayedLog(controlLog.filter((item) => isLogWithinDateRange(item)).slice(0, 5))
-  }, [date, controlLog])
+  }, [date, controlLog, lightStatus, fanStatus])
 
   return (
     <div>
@@ -98,13 +124,13 @@ const ControlLog = () => {
             <TableHead>
               <div className="flex items-center">
                 <p>Light</p>
-                <ComboboxDemo/>
+                <ComboboxDemo onHandle={handleLightStatusChange}/>
               </div>
             </TableHead>
             <TableHead>
               <div className="flex items-center">
                 <p>Fan</p>
-                <ComboboxDemo/>
+                <ComboboxDemo onHandle={handleFanStatusChange}/>
               </div>
             </TableHead>
             <TableHead className="text-right">

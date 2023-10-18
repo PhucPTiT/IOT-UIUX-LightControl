@@ -111,3 +111,7 @@
 .hover-zoom:hover {
   transform: scale(1.05);
 }
+canvas{
+  width:100% !important;
+  height: 100% !important;
+}

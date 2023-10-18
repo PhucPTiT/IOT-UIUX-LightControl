@@ -8,13 +8,13 @@ interface BrightnessProps {
 const Brightness = ({ data }: BrightnessProps) => {
     const brightness = +data;
 
-    let gradientColor = "from-gray-300 to-yellow-300"; // Default color for brightness >= 50 lux
+    let gradientColor = "from-gray-400 to-yellow-400"; // Default color for brightness >= 50 lux
     let gradientVia = ""; // Default, no "via" color
 
     if (brightness > 200) {
-        gradientColor = "from-orange-400 to-red-400";
+        gradientColor = "from-yellow-400 to-orange-400 animate-pulse";
     } else if (brightness > 50) {
-        gradientColor = "from-orange-400 via-yellow-400 to-yellow-400";
+        gradientColor = "from-yellow-400 via-yellow-400 to-orange-300";
         gradientVia = "via-yellow-400";
     }
 

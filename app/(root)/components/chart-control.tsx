@@ -31,8 +31,15 @@ export interface DataItem {
   time: string | null;
 }
 
+export interface Hust {
+  id: number | null;
+  dust: number;
+  time: string | null;
+}
+
 const ChartControl = () => {
   const[data, setData] = useState<DataItem[]>([]);
+  const[listHust, setListHust] = useState<Hust[]>([]);
 
   useEffect(() => {
     const fetchData = async() => {
@@ -55,6 +62,24 @@ const ChartControl = () => {
 
     }
   }, [])
+
+  useEffect(() => {
+    const fetchData = async() => {
+      try {
+        const response = await axios.get('https://java-iot-be-production.up.railway.app/dust');
+        const data = response.data;
+        setListHust(data);
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Something went wrong",
+          description: "Error call api get listHust"
+        })
+      }
+    }
+    fetchData(); 
+  }, [])
+
   useEffect(() => {
     const eventSource = new EventSource('https://java-iot-be-production.up.railway.app/chartSSE/data');
     eventSource.onmessage = (event) => {
@@ -107,9 +132,28 @@ const ChartControl = () => {
       },
     ],
   }
+  
 
+  const hustChartData = {
+    labels: listHust.map((data) => data.time?.split(" ")[1] || "00:00:00"),
+    datasets: [
+      {
+        label: "Hust",
+        data: listHust.map((item) => ""+item.dust),
+        backgroundColor: [
+          "#00FF00"
+        ],
+        borderColor: "#00BB00",
+        borderWidth: 2,
+      }
+    ]
+  }
   return (
-       <LineChart chartData={chartData}/>
+       <div className="grid grid-cols-1 lg:grid-cols-2 h-[600px] lg:h-full gap-4">
+         <div className="h-[290px] lg:h-full"><LineChart str = "Data Sensor" chartData={chartData}/></div>
+         <div className="h-[290px] lg:h-full"><LineChart str = "Hust Sensor" chartData={hustChartData}/></div>
+       </div>
+
   );
 };
  

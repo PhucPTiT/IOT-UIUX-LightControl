@@ -10,14 +10,18 @@ interface TemperatureProps {
 const Temperature = ({ data }: TemperatureProps) => {
     const temperature = +data;
 
-    let gradientColor = "from-indigo-500 to-indigo-500"; // Default color for temperatures below 0°C
+    let gradientColor = "from-blue-300 to-blue-500"; // Default color for temperatures below 0°C
 
     if (temperature > 0 && temperature <= 30) {
-        gradientColor = "from-blue-500 via-purple-500 to-pink-500";
-    } else if (temperature > 30 && temperature <= 40) {
-        gradientColor = "from-blue-500 via-yellow-500 to-red-500";
+        gradientColor = "from-green-300 via-green-500 to-green-500";
+    }
+    else if (temperature > 30 && temperature <= 35) {
+        gradientColor = "from-green-500 via-green-500 to-green-600";
+    }
+    else if (temperature > 35 && temperature <= 40) {
+        gradientColor = "from-green-500 via-red-500 to-green-500";
     } else if (temperature > 40) {
-        gradientColor = "from-red-500 via-orange-500 to-yellow-500";
+        gradientColor = "from-red-400 via-orange-500 to-red-500 animate-pulse";
     }
 
     return (

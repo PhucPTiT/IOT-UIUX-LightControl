@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import axios from "axios";
 import { ToastAction } from "@/components/ui/toast";
+import Dust from "./dust";
+import { getRandomDust } from "../utils/random";
 
 interface DataLog {
     temp: string,
@@ -71,11 +73,21 @@ const Data = () => {
         eventSource.close();
       }
     }, []);
+
+    //random dust
+    const [dust, setDust] = useState<number>();
+    useEffect(() => {
+        const interval = setInterval(() => {
+          setDust(getRandomDust());
+        },10000)
+        return () => clearInterval(interval);
+    },[])
     return ( 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pb-4">
           <Temperature data = {dataLog?.temp || "0"}/>
           <Humidity data = {dataLog?.humidity || "0"}/>
           <Brightness data = {dataLog?.brightness || "0"}/>
+          <Dust data = {dust || 0}/>
         </div>
     );
 }

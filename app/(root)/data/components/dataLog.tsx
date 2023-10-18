@@ -139,7 +139,7 @@ const DataLog = () => {
                   onClick={() => handleSort("temp")}
                   className="cursor-pointer"
                 >
-                  <div className="flex flex-row">
+                  <div className="flex flex-row items-center">
                     <p>Temp</p>
                     {sortColumn === "temp" && sortDirection === "asc" && <ChevronUp />}
                     {sortColumn === "temp" && sortDirection === "desc" && <ChevronDown />}
@@ -149,7 +149,7 @@ const DataLog = () => {
                   onClick={() => handleSort("humidity")}
                   className="cursor-pointer"
                 >
-                  <div className="flex flex-row">
+                  <div className="flex flex-row items-center">
                     <p>Humidity</p>
                     {sortColumn === "humidity" && sortDirection === "asc" && <ChevronUp />}
                     {sortColumn === "humidity" && sortDirection === "desc" && <ChevronDown />}
@@ -159,7 +159,7 @@ const DataLog = () => {
                   onClick={() => handleSort("brightness")}
                   className="cursor-pointer"
                 >
-                  <div className="flex flex-row">
+                  <div className="flex flex-row items-center">
                     <p>Brightness</p>
                     {sortColumn === "brightness" && sortDirection === "asc" && <ChevronUp />}
                     {sortColumn === "brightness" && sortDirection === "desc" && <ChevronDown />}
@@ -189,11 +189,6 @@ const DataLog = () => {
                         </TableCell>
                       </TableRow>
                     ))}
-                    <TableRow>
-                      <TableCell colSpan={5}>
-                          <Pagination totalPage={totalPage} handle={handleSwithPage} pageActive = {page}/>
-                      </TableCell>
-                    </TableRow>
                   </>
                 ) : (
                   <TableRow>
@@ -203,6 +198,7 @@ const DataLog = () => {
               }
             </TableBody>
           </Table>
+          <Pagination totalPage={totalPage} handle={handleSwithPage} pageActive = {page}/>
         </>
     );
 }

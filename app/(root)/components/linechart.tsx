@@ -15,13 +15,15 @@ interface LineChartProps {
             borderWidth: number;
         }[];
     };
+
+    str: string;
 }
 const font = Cedarville_Cursive({
   weight: "400",
   subsets: ["latin"]
 })
 
-const LineChart = ({chartData} : LineChartProps) => {
+const LineChart = ({chartData, str} : LineChartProps) => {
   const sizeBrowser = useWindowSize();
   const isMobile: boolean = sizeBrowser.width !== undefined && sizeBrowser.width < 1024;
   return (
@@ -29,10 +31,12 @@ const LineChart = ({chartData} : LineChartProps) => {
         className="bg-primary/10 rounded-xl"
         data={chartData}
         options={{
+          responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             title: {
               display: true,
-              text: "Line Chart Follow Control",
+              text: str,
               font: {
                 size: isMobile ? 12 : 32,
                 family: font.className,
