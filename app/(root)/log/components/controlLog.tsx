@@ -17,6 +17,7 @@ import { ToastAction } from "@/components/ui/toast";
 import { Filter } from "@/components/filter";
 import { DateRange } from "react-day-picker";
 import { ComboboxDemo } from "./comboBox";
+import Loading from "@/components/loading";
 
 interface ControlLogItem {
   id: number;
@@ -33,15 +34,19 @@ const ControlLog = () => {
   const [fanStatus, setFanStatus] = useState<"on" | "off" | ""> ("");
   const [lightStatus, setLightStatus] = useState<"on" | "off" | ""> ("");
   const itemsPerPage = 5;
+  const [isLoading, setIsLoading] = useState(true); 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("https://java-iot-be-production.up.railway.app/api/controllog");
+        setIsLoading(true);
+        const response = await axios.get("http://localhost:5000/api/controllog");
         setControlLog(response.data);
         setDisplayedLog(response.data.slice(0, 5))
+        setIsLoading(false);
       } catch (error) {
         console.error(error);
+        setIsLoading(false);
         toast({
           variant: "destructive",
           title: "Something went wrong",
@@ -64,6 +69,7 @@ const ControlLog = () => {
   };
 
   const handleFilterClick = (datechange: DateRange | undefined) => {
+    console.log(datechange)
     setDate(datechange)
   }
 
@@ -115,60 +121,66 @@ const ControlLog = () => {
   }, [date, controlLog, lightStatus, fanStatus])
 
   return (
-    <div>
-      <Table>
-        <TableCaption className="text-4xl font-bold">Control Log</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">ID</TableHead>
-            <TableHead>
-              <div className="flex items-center">
-                <p>Light</p>
-                <ComboboxDemo onHandle={handleLightStatusChange}/>
-              </div>
-            </TableHead>
-            <TableHead>
-              <div className="flex items-center">
-                <p>Fan</p>
-                <ComboboxDemo onHandle={handleFanStatusChange}/>
-              </div>
-            </TableHead>
-            <TableHead className="text-right">
-              <div className="flex justify-end items-center gap-1">
-                <span className="">Time</span>
-                <Filter onHandle={handleFilterClick}/>
-              </div>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {displayedLog.length > 0 ? (
-            displayedLog.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell className="font-medium">{item.id}</TableCell>
-                <TableCell>{item.lightStatus ? "On" : "Off"}</TableCell>
-                <TableCell>{item.fanStatus ? "On" : "Off"}</TableCell>
-                <TableCell className="text-right">
-                  {format(new Date(item.time), "dd/MM/yyyy HH:mm:ss")}
-                </TableCell>
+    <div className="h-full">
+      {isLoading ? 
+        <Loading/>
+      :
+        <>
+          <Table>
+            <TableCaption className="text-4xl font-bold">Control Log</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">ID</TableHead>
+                <TableHead>
+                  <div className="flex items-center">
+                    <p>Light</p>
+                    <ComboboxDemo onHandle={handleLightStatusChange}/>
+                  </div>
+                </TableHead>
+                <TableHead>
+                  <div className="flex items-center">
+                    <p>Fan</p>
+                    <ComboboxDemo onHandle={handleFanStatusChange}/>
+                  </div>
+                </TableHead>
+                <TableHead className="text-right">
+                  <div className="flex justify-end items-center gap-1">
+                    <span className="">Time</span>
+                    <Filter onHandle={handleFilterClick}/>
+                  </div>
+                </TableHead>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={4}>Không có dữ liệu</TableCell>
-            </TableRow>
-            
-          )}
-        </TableBody>
-      </Table>
-        <div className="w-full flex justify-center mt-1 text-gray-400">
-          {filterLog.length > displayedLog.length && (
-            <button onClick={handleShowMoreClick} className="flex flex-row  hover:text-gray-300">
-              <span>Xem thêm</span>
-              <ChevronDown />
-            </button>
-          )}
-        </div>
+            </TableHeader>
+            <TableBody>
+              {displayedLog.length > 0 ? (
+                displayedLog.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell className="font-medium">{item.id}</TableCell>
+                    <TableCell>{item.lightStatus ? "On" : "Off"}</TableCell>
+                    <TableCell>{item.fanStatus ? "On" : "Off"}</TableCell>
+                    <TableCell className="text-right">
+                      {format(new Date(item.time), "dd/MM/yyyy HH:mm:ss")}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4}>Không có dữ liệu</TableCell>
+                </TableRow>
+                
+              )}
+            </TableBody>
+          </Table>
+            <div className="w-full flex justify-center mt-1 text-gray-400">
+              {filterLog.length > displayedLog.length && (
+                <button onClick={handleShowMoreClick} className="flex flex-row  hover:text-gray-300">
+                  <span>Xem thêm</span>
+                  <ChevronDown />
+                </button>
+              )}
+            </div>
+        </>
+      }
     </div>
   );
 };

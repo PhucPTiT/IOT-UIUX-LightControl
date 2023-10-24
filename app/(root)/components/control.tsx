@@ -22,7 +22,7 @@ const Control = () => {
     useEffect(() => {
         const fetchData = async() =>  {
             try {
-                const response = await axios.get("https://java-iot-be-production.up.railway.app/api/controllog/first")
+                const response = await axios.get("http://localhost:5000/api/controllog/first")
                 const data = response.data;
                 setControl(data)
                 setLightStatus(data?.lightStatus || false);
@@ -49,7 +49,7 @@ const Control = () => {
                 lightStatus: !lightStatus,
                 fanStatus: fanStatus,
             }
-            await axios.post("https://java-iot-be-production.up.railway.app/api/controllog", values)
+            await axios.post("http://localhost:5000/api/controllog", values)
             toast({
                 description: "Success."
             })
@@ -70,7 +70,7 @@ const Control = () => {
                 lightStatus: lightStatus,
                 fanStatus: !fanStatus,
             }
-            await axios.post("https://java-iot-be-production.up.railway.app/api/controllog", values)
+            await axios.post("http://localhost:5000/api/controllog", values)
             toast({
                 description: "Success."
             })

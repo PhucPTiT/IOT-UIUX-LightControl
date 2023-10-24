@@ -4,17 +4,17 @@ import { cn } from "@/lib/utils";
 import { TreeDeciduous } from "lucide-react";
 
 interface DustProps {
-    data: number;
+    data: string;
 }
 
 const Dust = ({data} : DustProps) => {
     let gradientColor = "from-gray-400 via-gray-400 to-gray-500"; 
-    if(data > 80) {
+    if(+data > 80) {
         gradientColor = "from-gray-600 via-gray-800 to-gray-800 animate-pulse";
     }
-    else if (data > 60) {
+    else if (+data > 60) {
         gradientColor = "from-gray-500 via-gray-600 to-gray-600";
-    } else if (data < 40) {
+    } else if (+data < 40) {
         gradientColor = "from-gray-200 via-gray-300 to-gray-300";
     }
 

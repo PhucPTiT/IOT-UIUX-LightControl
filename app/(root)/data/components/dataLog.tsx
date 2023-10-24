@@ -20,6 +20,8 @@ import { toast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { Filter } from "@/components/filter";
 import { DateRange } from "react-day-picker";
+import Loading from "@/components/loading";
+import { cn } from "@/lib/utils";
 
 const DataLog = () => {
     const [reload, setReload] = useState<boolean>(false)
@@ -29,11 +31,11 @@ const DataLog = () => {
     const [date, setDate] = useState<DateRange | undefined> (undefined);
     const [sortColumn, setSortColumn] = useState<string>("");
     const [sortDirection, setSortDirection] = useState<"asc"|"desc">("asc");
+    const [isLoading, setIsLoading] = useState(true); 
 
     const handleFilterClick = (datechange: DateRange | undefined) => {
-      setDate(datechange)
+        setDate(datechange)
     }    
-
     const handleSort = (column: string) => {
       if(sortColumn === column) {
         setSortDirection(sortDirection === "asc" ? "desc" : "asc");
@@ -72,15 +74,16 @@ const DataLog = () => {
       }
       setData(sortedData);
     }
-
     useEffect(() => {
       const fetchData = async() => {
         if(!date || !date?.to || !date?.from) {
           try {
-            const response = await axios.get(`https://java-iot-be-production.up.railway.app/api/data?page=${page - 1}&size=30`);
+            const response = await axios.get(`http://localhost:5000/api/data?page=${page - 1}&size=30`);
             setTotalPage(response?.data.totalPages)
             handleSortedData(response?.data.content)
+            setIsLoading(false);
           } catch(error) {
+            setIsLoading(false);
             console.error(error);
             toast({
               variant: "destructive",
@@ -91,17 +94,18 @@ const DataLog = () => {
             setData([]);
           }
         } else {
+          setIsLoading(true);
           try {
             const sd = new Date(date.from);
             const ed = new Date(date.to);
-
             const formatSd = `${sd.getFullYear()}-${(sd.getMonth() + 1).toString().padStart(2, '0')}-${sd.getDate().toString().padStart(2, '0')} ${sd.getHours().toString().padStart(2, '0')}:${sd.getMinutes().toString().padStart(2, '0')}:${sd.getSeconds().toString().padStart(2, '0')}.${sd.getMilliseconds().toString().padStart(6, '0')}`; 
             const formatEd = `${ed.getFullYear()}-${(ed.getMonth() + 1).toString().padStart(2, '0')}-${(ed.getDate() + 1).toString().padStart(2, '0')} ${ed.getHours().toString().padStart(2, '0')}:${ed.getMinutes().toString().padStart(2, '0')}:${ed.getSeconds().toString().padStart(2, '0')}.${ed.getMilliseconds().toString().padStart(6, '0')}`; 
-            
-            const response = await axios.get(`https://java-iot-be-production.up.railway.app/api/data?page=${page - 1}&size=30&sd=${formatSd}&ed=${formatEd}`);
+            const response = await axios.get(`http://localhost:5000/api/data?page=${page - 1}&size=30&sd=${formatSd}&ed=${formatEd}`);
+            setIsLoading(false);
             setTotalPage(response?.data.totalPages)
             handleSortedData(response?.data.content)
           } catch(error) {
+            setIsLoading(false);
             console.error(error);
             toast({
               variant: "destructive",
@@ -111,8 +115,7 @@ const DataLog = () => {
             });
             setData([]);
           }
-        }
-        
+        }        
       }
 
       fetchData();
@@ -125,81 +128,86 @@ const DataLog = () => {
       setPage(pageswitch);
     }
     return (
-        <>
-          <Button className="w-10 m-0 p-0 h-8 md:w-24 md:h-10 fixed right-[60px] md:right-20 top-4 md:top-3 z-50 " onClick={() => {setReload(!reload)}}>
-            <span className="md:block hidden mr-1">Cập nhật</span>
-            <RefreshCcw/>
-          </Button>
-          <Table className="overflow-x-auto w-full">
-            <TableCaption className="text-4xl font-bold">Data Log</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">ID</TableHead>
-                <TableHead
-                  onClick={() => handleSort("temp")}
-                  className="cursor-pointer"
-                >
-                  <div className="flex flex-row items-center">
-                    <p>Temp</p>
-                    {sortColumn === "temp" && sortDirection === "asc" && <ChevronUp />}
-                    {sortColumn === "temp" && sortDirection === "desc" && <ChevronDown />}
-                  </div>
-                </TableHead>
-                <TableHead
-                  onClick={() => handleSort("humidity")}
-                  className="cursor-pointer"
-                >
-                  <div className="flex flex-row items-center">
-                    <p>Humidity</p>
-                    {sortColumn === "humidity" && sortDirection === "asc" && <ChevronUp />}
-                    {sortColumn === "humidity" && sortDirection === "desc" && <ChevronDown />}
-                  </div>
-                </TableHead>
-                <TableHead
-                  onClick={() => handleSort("brightness")}
-                  className="cursor-pointer"
-                >
-                  <div className="flex flex-row items-center">
-                    <p>Brightness</p>
-                    {sortColumn === "brightness" && sortDirection === "asc" && <ChevronUp />}
-                    {sortColumn === "brightness" && sortDirection === "desc" && <ChevronDown />}
-                  </div>
-                </TableHead>
-                <TableHead className="text-right">
-                  <div className="flex justify-end items-center gap-1">
-                    <span className="">Time</span>
-                    <Filter onHandle={handleFilterClick}/>
-                  </div>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {
-                data.length > 0 ? 
-                (
-                  <>
-                    {data.map((item) => (
-                      <TableRow key = {item.id}>
-                        <TableCell className="font-medium">{item.id}</TableCell>
-                        <TableCell className="whitespace-nowrap">{item.temp} *C</TableCell>
-                        <TableCell>{item.humidity} %</TableCell>
-                        <TableCell>{item.brightness} lux</TableCell>
-                        <TableCell className="text-right">
-                          {item.time && format(new Date(item.time), "dd/MM/yyyy HH:mm:ss")}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </>
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={5}>Không có dữ liệu</TableCell>
-                  </TableRow>
-                )
-              }
-            </TableBody>
-          </Table>
-          <Pagination totalPage={totalPage} handle={handleSwithPage} pageActive = {page}/>
-        </>
+      <div className="h-full" > 
+          <div>
+            <Button className="w-10 m-0 p-0 h-8 md:w-24 md:h-10 fixed right-[60px] md:right-20 top-4 md:top-3 z-50 " onClick={() => {setReload(!reload)}}>
+              <span className="md:block hidden mr-1">Cập nhật</span>
+              <RefreshCcw/>
+            </Button>
+            <Table className="overflow-x-auto w-full">
+              <TableCaption className="text-4xl font-bold">Data Log</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">ID</TableHead>
+                  <TableHead
+                    onClick={() => handleSort("temp")}
+                    className="cursor-pointer"
+                  >
+                    <div className="flex flex-row items-center">
+                      <p>Temp</p>
+                      {sortColumn === "temp" && sortDirection === "asc" && <ChevronUp />}
+                      {sortColumn === "temp" && sortDirection === "desc" && <ChevronDown />}
+                    </div>
+                  </TableHead>
+                  <TableHead
+                    onClick={() => handleSort("humidity")}
+                    className="cursor-pointer"
+                  >
+                    <div className="flex flex-row items-center">
+                      <p>Humidity</p>
+                      {sortColumn === "humidity" && sortDirection === "asc" && <ChevronUp />}
+                      {sortColumn === "humidity" && sortDirection === "desc" && <ChevronDown />}
+                    </div>
+                  </TableHead>
+                  <TableHead
+                    onClick={() => handleSort("brightness")}
+                    className="cursor-pointer"
+                  >
+                    <div className="flex flex-row items-center">
+                      <p>Brightness</p>
+                      {sortColumn === "brightness" && sortDirection === "asc" && <ChevronUp />}
+                      {sortColumn === "brightness" && sortDirection === "desc" && <ChevronDown />}
+                    </div>
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <div className="flex justify-end items-center gap-1">
+                      <span className="">Time</span>
+                      <Filter onHandle={handleFilterClick}/>
+                    </div>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className={cn(``, isLoading && "hidden")}>
+                {
+                  data.length > 0 ? 
+                  (
+                    <>
+                      {data.map((item) => (
+                        <TableRow key = {item.id}>
+                          <TableCell className="font-medium">{item.id}</TableCell>
+                          <TableCell className="whitespace-nowrap">{item.temp} *C</TableCell>
+                          <TableCell>{item.humidity} %</TableCell>
+                          <TableCell>{item.brightness} lux</TableCell>
+                          <TableCell className="text-right">
+                            {item.time && format(new Date(item.time), "dd/MM/yyyy HH:mm:ss")}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </>
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5}>Không có dữ liệu</TableCell>
+                    </TableRow>
+                  )
+                }
+              </TableBody>
+            </Table>
+            <Pagination className={cn("", isLoading && "hidden")} totalPage={totalPage} handle={handleSwithPage} pageActive = {totalPage > 0 ? page : 0}/>
+          </div>
+          {
+            isLoading && <Loading/>
+          }  
+      </div>
     );
 }
  

@@ -28,23 +28,18 @@ export interface DataItem {
   brightness: string;
   temp: string;
   humidity: string;
+  dust: string;
   time: string | null;
 }
 
-export interface Hust {
-  id: number | null;
-  dust: number;
-  time: string | null;
-}
 
 const ChartControl = () => {
   const[data, setData] = useState<DataItem[]>([]);
-  const[listHust, setListHust] = useState<Hust[]>([]);
 
   useEffect(() => {
     const fetchData = async() => {
       try {
-        const response = await axios.get('https://java-iot-be-production.up.railway.app/chartSSE/first');
+        const response = await axios.get('http://localhost:5000/chartSSE/first');
         response.data && setData(response.data)
       }
       catch(error) {
@@ -63,42 +58,39 @@ const ChartControl = () => {
     }
   }, [])
 
-  useEffect(() => {
-    const fetchData = async() => {
+  const connectSSE = () => {
+    const eventSource = new EventSource('http://localhost:5000/chartSSE/data');
+  
+    eventSource.onmessage = (event) => {
       try {
-        const response = await axios.get('https://java-iot-be-production.up.railway.app/dust');
-        const data = response.data;
-        setListHust(data);
+        const newData = JSON.parse(event.data);
+        setData(newData);
       } catch (error) {
         toast({
           variant: "destructive",
           title: "Something went wrong",
-          description: "Error call api get listHust"
-        })
-      }
-    }
-    fetchData(); 
-  }, [])
-
-  useEffect(() => {
-    const eventSource = new EventSource('https://java-iot-be-production.up.railway.app/chartSSE/data');
-    eventSource.onmessage = (event) => {
-      try {
-        const newData = JSON.parse(event.data);
-        setData(newData)
-      } catch (error) {
-        toast({
-          variant: "destructive",
-          title: "Some thing went wrong",
-          description: "Error connect get datasensor",
+          description: "Error connecting to get data sensor",
           action: <ToastAction altText="Try again">Try again</ToastAction>,
         });
+        eventSource.close();
+        connectSSE(); // Reconnect when there's an error
       }
-     }
-     return () => {
+    };
+  
+    eventSource.onerror = (event) => {
+      if ((event.target as EventSource).readyState === EventSource.CLOSED) {
+        // The connection has been closed. Attempt to reconnect.
+        connectSSE();
+      }
+    };
+  
+    return () => {
       eventSource.close();
-     }
-  }, [])
+    };
+  };
+  
+  // useEffect(connectSSE, []);
+  connectSSE()
 
   const chartData = {
     labels: data.map((data) => data.time?.split(" ")[1] || "00:00:00"), // Convert 'year' to string
@@ -135,11 +127,11 @@ const ChartControl = () => {
   
 
   const hustChartData = {
-    labels: listHust.map((data) => data.time?.split(" ")[1] || "00:00:00"),
+    labels: data.map((data) => data.time?.split(" ")[1] || "00:00:00"),
     datasets: [
       {
         label: "Hust",
-        data: listHust.map((item) => ""+item.dust),
+        data: data.map((item) => item.dust),
         backgroundColor: [
           "#00FF00"
         ],

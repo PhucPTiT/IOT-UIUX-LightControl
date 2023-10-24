@@ -18,7 +18,9 @@ export interface FilterProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function Filter({ onHandle,className, ...props }: FilterProps) {
   const [date, setDate] = React.useState<DateRange | undefined>()
-  useEffect(()=> {onHandle(date)}, [date])
+  useEffect(()=> {
+    onHandle(date)}
+  , [date])
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -33,6 +35,7 @@ export function Filter({ onHandle,className, ...props }: FilterProps) {
             selected={date}
             onSelect={setDate}
             numberOfMonths={2}
+      
           />
         </PopoverContent>
       </Popover>

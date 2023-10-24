@@ -11,7 +11,7 @@ const RootLayout = (
                 <Sidebar/>
             </div>
             <main className="pt-16 h-full md:pl-20">
-                <div className="flex">
+                <div className="flex h-full">
                     {children}
                 </div>
             </main>
