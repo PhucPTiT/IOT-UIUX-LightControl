@@ -15,24 +15,19 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-const frameworks = [
-  {
-    value: "on",
-    label: "on",
-  },
-  {
-    value: "off",
-    label: "off",
-  }
-]
-
-interface ComboboxDemoProps {
-  onHandle: (a : "" | "on" | "off") => void;
+interface FrameworkItem {
+  value: string;
+  label: string;
 }
 
-export function ComboboxDemo({onHandle} : ComboboxDemoProps) {
+interface ComboboxDemoProps {
+  onHandle: (a : string) => void;
+  frameworks: FrameworkItem[];
+}
+
+export function ComboboxDemo({onHandle, frameworks} : ComboboxDemoProps) {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState<"" | "on" | "off">("")
+  const [value, setValue] = React.useState<string>("")
   React.useEffect(() => {onHandle(value)}, [value])
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -46,10 +41,8 @@ export function ComboboxDemo({onHandle} : ComboboxDemoProps) {
               <CommandItem
                 key={framework.value}
                 onSelect={(currentValue) => {
-                  if(currentValue === "on" || currentValue ==="off" || currentValue === "") {
                     setValue(currentValue === value ? "" : currentValue)
                     setOpen(false)
-                  }
                 }}
               >
                 <Check

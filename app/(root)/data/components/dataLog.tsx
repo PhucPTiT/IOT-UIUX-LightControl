@@ -15,13 +15,15 @@ import { DataItem } from "../../components/chart-control";
 import Pagination from "@/components/pagination";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, RefreshCcw } from "lucide-react";
+import { ChevronDown, ChevronUp, RefreshCcw} from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { Filter } from "@/components/filter";
 import { DateRange } from "react-day-picker";
 import Loading from "@/components/loading";
 import { cn } from "@/lib/utils";
+import Search from "./search";
+import { error } from "console";
 
 const DataLog = () => {
     const [reload, setReload] = useState<boolean>(false)
@@ -32,6 +34,7 @@ const DataLog = () => {
     const [sortColumn, setSortColumn] = useState<string>("");
     const [sortDirection, setSortDirection] = useState<"asc"|"desc">("asc");
     const [isLoading, setIsLoading] = useState(true); 
+    const [key, setKey] = useState<string>("");
 
     const handleFilterClick = (datechange: DateRange | undefined) => {
         setDate(datechange)
@@ -77,43 +80,89 @@ const DataLog = () => {
     useEffect(() => {
       const fetchData = async() => {
         if(!date || !date?.to || !date?.from) {
-          try {
-            const response = await axios.get(`http://localhost:5000/api/data?page=${page - 1}&size=30`);
-            setTotalPage(response?.data.totalPages)
-            handleSortedData(response?.data.content)
-            setIsLoading(false);
-          } catch(error) {
-            setIsLoading(false);
-            console.error(error);
-            toast({
-              variant: "destructive",
-              title: "Something went wrong",
-              description: "Error call API get data sensor log",
-              action: <ToastAction altText="Try again">Try again</ToastAction>,
-            });
-            setData([]);
+          if (key) {
+            setIsLoading(true)
+            axios.get(`http://localhost:5000/api/data?page=${page - 1}&size=30&sd=&ed=&key=${key}`)
+            .then(response => {
+              setTotalPage(response?.data.totalPages)
+              handleSortedData(response?.data.content)
+              setIsLoading(false);
+            })
+            .catch((error) => {
+              setIsLoading(false);
+              console.error(error);
+              toast({
+                variant: "destructive",
+                title: "Something went wrong",
+                description: "Error call API get data search",
+                action: <ToastAction altText="Try again">Try again</ToastAction>,
+              });
+              setData([]);
+            })
+          } else {
+            try {
+              const response = await axios.get(`http://localhost:5000/api/data?page=${page - 1}&size=30`);
+              setTotalPage(response?.data.totalPages)
+              handleSortedData(response?.data.content)
+              setIsLoading(false);
+            } catch(error) {
+              setIsLoading(false);
+              console.error(error);
+              toast({
+                variant: "destructive",
+                title: "Something went wrong",
+                description: "Error call API get data sensor log",
+                action: <ToastAction altText="Try again">Try again</ToastAction>,
+              });
+              setData([]);
+            }
           }
         } else {
-          setIsLoading(true);
-          try {
+          if (key) {
+            setIsLoading(true)
             const sd = new Date(date.from);
             const ed = new Date(date.to);
             const formatSd = `${sd.getFullYear()}-${(sd.getMonth() + 1).toString().padStart(2, '0')}-${sd.getDate().toString().padStart(2, '0')} ${sd.getHours().toString().padStart(2, '0')}:${sd.getMinutes().toString().padStart(2, '0')}:${sd.getSeconds().toString().padStart(2, '0')}.${sd.getMilliseconds().toString().padStart(6, '0')}`; 
-            const formatEd = `${ed.getFullYear()}-${(ed.getMonth() + 1).toString().padStart(2, '0')}-${(ed.getDate() + 1).toString().padStart(2, '0')} ${ed.getHours().toString().padStart(2, '0')}:${ed.getMinutes().toString().padStart(2, '0')}:${ed.getSeconds().toString().padStart(2, '0')}.${ed.getMilliseconds().toString().padStart(6, '0')}`; 
-            const response = await axios.get(`http://localhost:5000/api/data?page=${page - 1}&size=30&sd=${formatSd}&ed=${formatEd}`);
-            setIsLoading(false);
-            setTotalPage(response?.data.totalPages)
-            handleSortedData(response?.data.content)
-          } catch(error) {
-            setIsLoading(false);
-            console.error(error);
-            toast({
-              variant: "destructive",
-              title: "Something went wrong",
-              description: "Error call API get data sensor log",
-              action: <ToastAction altText="Try again">Try again</ToastAction>,
-            });
-            setData([]);
+            const formatEd = `${ed.getFullYear()}-${(ed.getMonth() + 1).toString().padStart(2, '0')}-${(ed.getDate() + 1).toString().padStart(2, '0')} ${ed.getHours().toString().padStart(2, '0')}:${ed.getMinutes().toString().padStart(2, '0')}:${ed.getSeconds().toString().padStart(2, '0')}.${ed.getMilliseconds().toString().padStart(6, '0')}`;
+            axios.get(`http://localhost:5000/api/data?page=${page - 1}&size=30&sd=${formatSd}&ed=${formatEd}&key=${key}`)
+            .then(response => {
+              setTotalPage(response?.data.totalPages)
+              handleSortedData(response?.data.content)
+              setIsLoading(false);
+            })
+            .catch((error) => {
+              setIsLoading(false);
+              console.error(error);
+              toast({
+                variant: "destructive",
+                title: "Something went wrong",
+                description: "Error call API get data search",
+                action: <ToastAction altText="Try again">Try again</ToastAction>,
+              });
+              setData([]);
+            })
+          } else {
+            setIsLoading(true);
+            try {
+              const sd = new Date(date.from);
+              const ed = new Date(date.to);
+              const formatSd = `${sd.getFullYear()}-${(sd.getMonth() + 1).toString().padStart(2, '0')}-${sd.getDate().toString().padStart(2, '0')} ${sd.getHours().toString().padStart(2, '0')}:${sd.getMinutes().toString().padStart(2, '0')}:${sd.getSeconds().toString().padStart(2, '0')}.${sd.getMilliseconds().toString().padStart(6, '0')}`; 
+              const formatEd = `${ed.getFullYear()}-${(ed.getMonth() + 1).toString().padStart(2, '0')}-${(ed.getDate() + 1).toString().padStart(2, '0')} ${ed.getHours().toString().padStart(2, '0')}:${ed.getMinutes().toString().padStart(2, '0')}:${ed.getSeconds().toString().padStart(2, '0')}.${ed.getMilliseconds().toString().padStart(6, '0')}`; 
+              const response = await axios.get(`http://localhost:5000/api/data?page=${page - 1}&size=30&sd=${formatSd}&ed=${formatEd}`);
+              setIsLoading(false);
+              setTotalPage(response?.data.totalPages)
+              handleSortedData(response?.data.content)
+            } catch(error) {
+              setIsLoading(false);
+              console.error(error);
+              toast({
+                variant: "destructive",
+                title: "Something went wrong",
+                description: "Error call API get data sensor log",
+                action: <ToastAction altText="Try again">Try again</ToastAction>,
+              });
+              setData([]);
+            }
           }
         }        
       }
@@ -122,14 +171,21 @@ const DataLog = () => {
       return () => {
       
       }
-    }, [page, reload, date, sortColumn, sortDirection])
+    }, [page, reload, date, sortColumn, sortDirection, key])
 
     const handleSwithPage = (pageswitch: number) => {
       setPage(pageswitch);
     }
+
+    // Feature Search
+    const handleSearch = (str: string) => {
+      setKey(str);
+    }
+
     return (
       <div className="h-full" > 
           <div>
+            <Search onSearch ={handleSearch}/>
             <Button className="w-10 m-0 p-0 h-8 md:w-24 md:h-10 fixed right-[60px] md:right-20 top-4 md:top-3 z-50 " onClick={() => {setReload(!reload)}}>
               <span className="md:block hidden mr-1">Cập nhật</span>
               <RefreshCcw/>

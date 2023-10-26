@@ -8,87 +8,87 @@ import { useRouter } from "next/navigation";
 import { ToastAction } from "@radix-ui/react-toast";
 interface ControlData {
     id: number;
-    lightStatus: boolean;
-    fanStatus: boolean;
+    device: string;
+    status: boolean;
     time: string;
 }
 
 const Control = () => {
-    const router = useRouter();
-    const [control, setControl] = useState<ControlData>()
-    const [lightStatus, setLightStatus] = useState<boolean>(control?.lightStatus ?? false);
-    const [fanStatus, setFanStatus] = useState<boolean>(control?.fanStatus ?? false);
+    // const router = useRouter();
+    // const [control, setControl] = useState<ControlData>()
+    // const [lightStatus, setLightStatus] = useState<boolean>(false);
+    // const [fanStatus, setFanStatus] = useState<boolean>(false);
     
-    useEffect(() => {
-        const fetchData = async() =>  {
-            try {
-                const response = await axios.get("http://localhost:5000/api/controllog/first")
-                const data = response.data;
-                setControl(data)
-                setLightStatus(data?.lightStatus || false);
-                setFanStatus(data?.fanStatus || false);
-            } catch (error) {
-                toast({
-                    variant: "destructive",
-                    title: "Something went wrong",
-                    description: "Error call api control first status"
-                })
-            }
+    // useEffect(() => {
+    //     const fetchData = async() =>  {
+    //         try {
+    //             const response = await axios.get("http://localhost:5000/api/controllog/first")
+    //             const data = response.data;
+    //             setControl(data)
+    //             setLightStatus(data?.lightStatus || false);
+    //             setFanStatus(data?.fanStatus || false);
+    //         } catch (error) {
+    //             toast({
+    //                 variant: "destructive",
+    //                 title: "Something went wrong",
+    //                 description: "Error call api control first status"
+    //             })
+    //         }
             
-        }
-        fetchData();
-        return () => {
+    //     }
+    //     fetchData();
+    //     return () => {
       
-        }
-    }, [])
+    //     }
+    // }, [])
 
-    const handleClickToggleLight = async() => {
-        setLightStatus((prevValue) => !prevValue)
-        try{
-            const values : object = {
-                lightStatus: !lightStatus,
-                fanStatus: fanStatus,
-            }
-            await axios.post("http://localhost:5000/api/controllog", values)
-            toast({
-                description: "Success."
-            })
-        } catch(error) {
-            console.error(error)
-            toast({
-                variant: "destructive",
-                title: "Something went wrong",
-                description: "Error call api control light"
-            })
-        }
-    }
+    // const handleClickToggleLight = async() => {
+    //     setLightStatus((prevValue) => !prevValue)
+    //     try{
+    //         const values : object = {
+    //             lightStatus: !lightStatus,
+    //             fanStatus: fanStatus,
+    //         }
+    //         await axios.post("http://localhost:5000/api/controllog", values)
+    //         toast({
+    //             description: "Success."
+    //         })
+    //     } catch(error) {
+    //         console.error(error)
+    //         toast({
+    //             variant: "destructive",
+    //             title: "Something went wrong",
+    //             description: "Error call api control light"
+    //         })
+    //     }
+    // }
 
-    const handleCLickToggleFan = async() => {
-        setFanStatus((prevValue) => !prevValue)
-        try{
-            const values : object = {
-                lightStatus: lightStatus,
-                fanStatus: !fanStatus,
-            }
-            await axios.post("http://localhost:5000/api/controllog", values)
-            toast({
-                description: "Success."
-            })
-        } catch(error) {
-            console.error(error)
-            toast({
-                variant: "destructive",
-                title: "Something went wrong",
-                description: "Error call api control fan",
-                action: <ToastAction altText="Try again">Try again</ToastAction>,
-            })
-        }
-    } 
+    // const handleCLickToggleFan = async() => {
+    //     setFanStatus((prevValue) => !prevValue)
+    //     try{
+    //         const values : object = {
+    //             lightStatus: lightStatus,
+    //             fanStatus: !fanStatus,
+    //         }
+    //         await axios.post("http://localhost:5000/api/controllog", values)
+    //         toast({
+    //             description: "Success."
+    //         })
+    //     } catch(error) {
+    //         console.error(error)
+    //         toast({
+    //             variant: "destructive",
+    //             title: "Something went wrong",
+    //             description: "Error call api control fan",
+    //             action: <ToastAction altText="Try again">Try again</ToastAction>,
+    //         })
+    //     }
+    // } 
 
     return ( 
         <>
-            <LightControl status = {lightStatus} onHandle = {handleClickToggleLight}/>
-            <FanControl status = {fanStatus} onHandle = {handleCLickToggleFan}/>
+            <LightControl/>
+            <FanControl/>
         </>
     );
 }

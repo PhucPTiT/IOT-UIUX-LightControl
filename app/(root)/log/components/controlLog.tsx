@@ -21,8 +21,8 @@ import Loading from "@/components/loading";
 
 interface ControlLogItem {
   id: number;
-  lightStatus: boolean;
-  fanStatus: boolean;
+  device: string;
+  status: boolean;
   time: string;
 }
 
@@ -31,10 +31,30 @@ const ControlLog = () => {
   const [displayedLog, setDisplayedLog] = useState<ControlLogItem[]>([]);
   const [filterLog, setFilterLog] = useState<ControlLogItem[]>([])
   const [date, setDate] = useState<DateRange | undefined> (undefined);
-  const [fanStatus, setFanStatus] = useState<"on" | "off" | ""> ("");
-  const [lightStatus, setLightStatus] = useState<"on" | "off" | ""> ("");
+  const [status, setStatus] = useState<string> ("");
+  const [device, setDevice] = useState<string> ("");
   const itemsPerPage = 5;
   const [isLoading, setIsLoading] = useState(true); 
+  const frameworksDevice = [
+    {
+      value: "light",
+      label:  "light"
+    },
+    {
+      value: "fan",
+      label: "fan",
+    }
+  ]
+  const frameworksStatus = [
+    {
+      value: "on",
+      label:  "on"
+    },
+    {
+      value: "off",
+      label: "off",
+    }
+  ]
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,16 +89,15 @@ const ControlLog = () => {
   };
 
   const handleFilterClick = (datechange: DateRange | undefined) => {
-    console.log(datechange)
     setDate(datechange)
   }
 
-  const handleLightStatusChange = (status: "on" | "off" | "") => {
-    setLightStatus(status)
+  const handleDeviceChange = (status: string) => {
+    setDevice(status)
   }
 
-  const handleFanStatusChange = (status: "on" | "off" | "") =>  {
-    setFanStatus(status)
+  const handleStatusChange = (status: string) =>  {
+    setStatus(status)
   }
   
   const isLogWithinDateRange = (log: ControlLogItem) => {
@@ -87,8 +106,8 @@ const ControlLog = () => {
     // Kiểm tra nếu ngày không được chỉ định hoặc ngày không hợp lệ
     if (!date || !date.from || !date.to) {
       return (
-        (lightStatus === "" || log.lightStatus === (lightStatus === "on")) &&
-        (fanStatus === "" || log.fanStatus === (fanStatus === "on"))
+        (device === "" || log.device === device) &&
+        (status === "" || log.status === (status === "on"))
       );
     }
   
@@ -102,23 +121,23 @@ const ControlLog = () => {
       return (
         logTime >= startDate &&
         logTime <= new Date(endDate.setDate(endDay + 1)) &&
-        (lightStatus === "" || log.lightStatus === (lightStatus === "on")) &&
-        (fanStatus === "" || log.fanStatus === (fanStatus === "on"))
+        (device === "" || log.device === device) &&
+        (status === "" || log.status === (status === "on"))
       );
     }
   
     return (
       logTime >= startDate &&
       logTime < new Date(endDate.setDate(endDay + 1)) &&
-      (lightStatus === "" || log.lightStatus === (lightStatus === "on")) &&
-      (fanStatus === "" || log.fanStatus === (fanStatus === "on"))
+      (device === "" || log.device === device) &&
+      (status === "" || log.status === (status === "on"))
     );
   }
   
   useEffect(() => {
     setFilterLog(controlLog.filter((item) => isLogWithinDateRange(item)));
     setDisplayedLog(controlLog.filter((item) => isLogWithinDateRange(item)).slice(0, 5))
-  }, [date, controlLog, lightStatus, fanStatus])
+  }, [date, controlLog, device, status])
 
   return (
     <div className="h-full">
@@ -133,14 +152,14 @@ const ControlLog = () => {
                 <TableHead className="w-[100px]">ID</TableHead>
                 <TableHead>
                   <div className="flex items-center">
-                    <p>Light</p>
-                    <ComboboxDemo onHandle={handleLightStatusChange}/>
+                    <p>Device</p>
+                    <ComboboxDemo frameworks={frameworksDevice} onHandle={handleDeviceChange}/>
                   </div>
                 </TableHead>
                 <TableHead>
                   <div className="flex items-center">
-                    <p>Fan</p>
-                    <ComboboxDemo onHandle={handleFanStatusChange}/>
+                    <p>Status</p>
+                    <ComboboxDemo frameworks={frameworksStatus} onHandle={handleStatusChange}/>
                   </div>
                 </TableHead>
                 <TableHead className="text-right">
@@ -156,8 +175,8 @@ const ControlLog = () => {
                 displayedLog.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell className="font-medium">{item.id}</TableCell>
-                    <TableCell>{item.lightStatus ? "On" : "Off"}</TableCell>
-                    <TableCell>{item.fanStatus ? "On" : "Off"}</TableCell>
+                    <TableCell>{item.device}</TableCell>
+                    <TableCell>{item.status ? "On" : "Off"}</TableCell>
                     <TableCell className="text-right">
                       {format(new Date(item.time), "dd/MM/yyyy HH:mm:ss")}
                     </TableCell>
