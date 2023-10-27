@@ -92,10 +92,10 @@ const FanControl = ({dust} : FanControlProps) => {
 
     // useEffect(() => {
     //     setLastStatus(isOn);
-    //     if(+dust > 70) {
+    //     if(+dust > 80) {
     //         const interval = setInterval(() => {
     //             handleLastStatus(null);
-    //         }, 50)
+    //         }, 500)
 
     //         return () => {
     //             clearInterval(interval);

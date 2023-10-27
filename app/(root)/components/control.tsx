@@ -19,25 +19,6 @@ const Control = () => {
         brightness: "0",
         dust: "0",
     }) ;
-    useEffect(() => {
-        const eventSource = new EventSource('http://localhost:5000/sse/connect');
-        eventSource.onmessage = (event) => {
-          try {
-            const newData = JSON.parse(event.data);
-            setDataLog(newData);
-          } catch (error) {
-            toast({
-              variant: "destructive",
-              title: "Some thing went wrong",
-              description: "Error connect get datasensor",
-              action: <ToastAction altText="Try again">Try again</ToastAction>,
-            });
-          }
-        };
-        return () => {
-          eventSource.close();
-        }
-      }, []);
 
     return ( 
         <>

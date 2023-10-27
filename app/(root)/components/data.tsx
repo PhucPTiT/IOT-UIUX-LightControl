@@ -41,25 +41,51 @@ const Data = () => {
       }
       fetchAPI();
     }, [])
-    useEffect(() => {
-      const eventSource = new EventSource('http://localhost:5000/sse/connect');
-      eventSource.onmessage = (event) => {
-        try {
-          const newData = JSON.parse(event.data);
-          setDataLog(newData);
-        } catch (error) {
-          toast({
-            variant: "destructive",
-            title: "Some thing went wrong",
-            description: "Error connect get datasensor",
-            action: <ToastAction altText="Try again">Try again</ToastAction>,
-          });
+    const connectSSE = () => {
+      let eventSource: EventSource | null = null;
+    
+      const openSSEConnection = () => {
+        eventSource = new EventSource('http://localhost:5000/sse/connect');
+    
+        eventSource.onmessage = (event) => {
+          try {
+            const newData = JSON.parse(event.data);
+            setDataLog(newData); // Assuming `setData` is a valid function in your component.
+          } catch (error) {
+            handleSSEError();
+          }
+        };
+    
+        eventSource.onerror = () => {
+          handleSSEError();
+        };
+      };
+    
+      const handleSSEError = () => {
+        toast({
+          variant: "destructive",
+          title: "Something went wrong",
+          description: "Error connecting to get data sensor",
+          action: <ToastAction altText="Try again" onClick={openSSEConnection}>Try again</ToastAction>,
+        });
+    
+        if (eventSource) {
+          eventSource.close();
         }
       };
-      return () => {
-        eventSource.close();
-      }
-    }, []);
+    
+      useEffect(() => {
+        openSSEConnection();
+    
+        return () => {
+          if (eventSource) {
+            eventSource.close();
+          }
+        };
+      }, []);
+    };
+    connectSSE();
+
 
     //random dust
     return ( 

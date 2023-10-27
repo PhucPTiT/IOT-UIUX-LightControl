@@ -59,38 +59,50 @@ const ChartControl = () => {
   }, [])
 
   const connectSSE = () => {
-    const eventSource = new EventSource('http://localhost:5000/chartSSE/data');
+    let eventSource: EventSource | null = null;
   
-    eventSource.onmessage = (event) => {
-      try {
-        const newData = JSON.parse(event.data);
-        setData(newData);
-      } catch (error) {
-        toast({
-          variant: "destructive",
-          title: "Something went wrong",
-          description: "Error connecting to get data sensor",
-          action: <ToastAction altText="Try again">Try again</ToastAction>,
-        });
+    const openSSEConnection = () => {
+      eventSource = new EventSource('http://localhost:5000/chartSSE/data');
+  
+      eventSource.onmessage = (event) => {
+        try {
+          const newData = JSON.parse(event.data);
+          setData(newData); // Assuming `setData` is a valid function in your component.
+        } catch (error) {
+          handleSSEError();
+        }
+      };
+  
+      eventSource.onerror = () => {
+        handleSSEError();
+      };
+    };
+  
+    const handleSSEError = () => {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: "Error connecting to get data sensor",
+        action: <ToastAction altText="Try again" onClick={openSSEConnection}>Try again</ToastAction>,
+      });
+  
+      if (eventSource) {
         eventSource.close();
-        connectSSE(); // Reconnect when there's an error
       }
     };
   
-    eventSource.onerror = (event) => {
-      if ((event.target as EventSource).readyState === EventSource.CLOSED) {
-        // The connection has been closed. Attempt to reconnect.
-        connectSSE();
-      }
-    };
+    useEffect(() => {
+      openSSEConnection();
   
-    return () => {
-      eventSource.close();
-    };
+      return () => {
+        if (eventSource) {
+          eventSource.close();
+        }
+      };
+    }, []);
   };
+  connectSSE();
   
-  // useEffect(connectSSE, []);
-  connectSSE()
 
   const chartData = {
     labels: data.map((data) => data.time?.split(" ")[1] || "00:00:00"), // Convert 'year' to string

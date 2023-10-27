@@ -63,13 +63,13 @@ const LightControl = ({dust}: LightControlProps) => {
     } 
 
     const handleLastStatus = async(lastStatus: boolean | null) => {
-        if (lastStatus !== null) {
-            setIsOn(lastStatus);
-            const values : object = {
-                device: "light",
-                status: lastStatus,
-            }
-            await axios.post("http://localhost:5000/api/controllog", values)
+        if (lastStatus !== null && lastStatus != isOn) {
+            // setIsOn(lastStatus);
+            // const values : object = {
+            //     device: "light",
+            //     status: lastStatus,
+            // }
+            // await axios.post("http://localhost:5000/api/controllog", values)
         } else {
             setIsOn((prevValue) => !prevValue)
             try{
@@ -91,20 +91,18 @@ const LightControl = ({dust}: LightControlProps) => {
     }
     // useEffect(() => {
     //     setLastStatus(isOn);
-    //     if(+dust > 80) {
+    //     if(+dust > 90) {
     //         const interval = setInterval(() => {
     //             handleLastStatus(null);
     //         }, 500)
-
     //         return () => {
     //             clearInterval(interval);
     //         };
     //     } else {
-    //         if (lastStatus !== null) {
-    //             setIsOn(lastStatus);
-    //             handleLastStatus(lastStatus);
-    //         }
-            
+    //         // if (lastStatus !== null) {
+    //         //     setIsOn(lastStatus);
+    //         //     handleLastStatus(lastStatus);
+    //         // }
     //     }
     //   }, [dust]);
 
