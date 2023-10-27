@@ -18,8 +18,10 @@ import { Filter } from "@/components/filter";
 import { DateRange } from "react-day-picker";
 import { ComboboxDemo } from "./comboBox";
 import Loading from "@/components/loading";
+import Context from "@/components/context";
+import PopupDelete from "./popupDelete";
 
-interface ControlLogItem {
+export interface ControlLogItem {
   id: number;
   device: string;
   status: boolean;
@@ -33,8 +35,16 @@ const ControlLog = () => {
   const [date, setDate] = useState<DateRange | undefined> (undefined);
   const [status, setStatus] = useState<string> ("");
   const [device, setDevice] = useState<string> ("");
-  const itemsPerPage = 5;
   const [isLoading, setIsLoading] = useState(true); 
+  const initialContextMenu = {
+    show: false,
+    x: 0,
+    y: 0,
+    item: {}
+  }
+  const [contextMenu, setContextMenu]= useState(initialContextMenu);
+  const [rowDelete, setRowDelete] = useState<ControlLogItem | {}>({})
+  const itemsPerPage = 5;
   const frameworksDevice = [
     {
       value: "light",
@@ -59,7 +69,7 @@ const ControlLog = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
+        // setIsLoading(true);
         const response = await axios.get("http://localhost:5000/api/controllog");
         setControlLog(response.data);
         setDisplayedLog(response.data.slice(0, 5))
@@ -81,7 +91,7 @@ const ControlLog = () => {
     return () => {
       
     }
-  }, []);
+  }, [rowDelete]);
 
 
   const handleShowMoreClick = () => {
@@ -139,8 +149,20 @@ const ControlLog = () => {
     setDisplayedLog(controlLog.filter((item) => isLogWithinDateRange(item)).slice(0, 5))
   }, [date, controlLog, device, status])
 
+  const handleTableRowContextMenu = (item: ControlLogItem) => (e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
+    e.preventDefault();
+    const { pageX, pageY } = e;
+    setContextMenu({ show: true, x: pageX, y: pageY, item: item});
+  };
+  const contextMenuClose = () => setContextMenu(initialContextMenu)
+
+  const handlePopupDelete = (controlLog: ControlLogItem | {}) => {
+    setRowDelete(controlLog)
+  }
   return (
     <div className="h-full">
+      {'id' in rowDelete && <PopupDelete data = {rowDelete} onHandle={handlePopupDelete}/>}
+      {contextMenu.show && <Context onDelete={handlePopupDelete} item={contextMenu.item} x = {contextMenu.x} y = {contextMenu.y} closeContextMenu={contextMenuClose}/>}
       {isLoading ? 
         <Loading/>
       :
@@ -173,7 +195,7 @@ const ControlLog = () => {
             <TableBody>
               {displayedLog.length > 0 ? (
                 displayedLog.map((item) => (
-                  <TableRow key={item.id}>
+                  <TableRow onContextMenu={handleTableRowContextMenu(item)}  key={item.id}>
                     <TableCell className="font-medium">{item.id}</TableCell>
                     <TableCell>{item.device}</TableCell>
                     <TableCell>{item.status ? "On" : "Off"}</TableCell>

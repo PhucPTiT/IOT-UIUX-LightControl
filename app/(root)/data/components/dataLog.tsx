@@ -24,6 +24,8 @@ import Loading from "@/components/loading";
 import { cn } from "@/lib/utils";
 import Search from "./search";
 import { error } from "console";
+import Context from "@/components/context";
+import PopupDelete from "./popupDelete";
 
 const DataLog = () => {
     const [reload, setReload] = useState<boolean>(false)
@@ -35,6 +37,14 @@ const DataLog = () => {
     const [sortDirection, setSortDirection] = useState<"asc"|"desc">("asc");
     const [isLoading, setIsLoading] = useState(true); 
     const [key, setKey] = useState<string>("");
+    const initialContextMenu = {
+      show: false,
+      x: 0,
+      y: 0,
+      item: {}
+    }
+    const [contextMenu, setContextMenu]= useState(initialContextMenu);
+    const [rowDelete, setRowDelete] = useState<DataItem | {}>({})
 
     const handleFilterClick = (datechange: DateRange | undefined) => {
         setDate(datechange)
@@ -171,7 +181,7 @@ const DataLog = () => {
       return () => {
       
       }
-    }, [page, reload, date, sortColumn, sortDirection, key])
+    }, [page, reload, date, sortColumn, sortDirection, key, rowDelete])
 
     const handleSwithPage = (pageswitch: number) => {
       setPage(pageswitch);
@@ -182,8 +192,20 @@ const DataLog = () => {
       setKey(str);
     }
 
+    const handleTableRowContextMenu = (item: DataItem) => (e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
+      e.preventDefault();
+      const { pageX, pageY } = e;
+      setContextMenu({ show: true, x: pageX, y: pageY, item: item});
+    };
+    const contextMenuClose = () => setContextMenu(initialContextMenu)
+
+    const handlePopupDelete = (dataSensor: DataItem | {}) => {
+      setRowDelete(dataSensor)
+    }
     return (
       <div className="h-full" > 
+          {'id' in rowDelete && <PopupDelete data = {rowDelete} onHandle={handlePopupDelete}/>}
+          {contextMenu.show && <Context onDelete={handlePopupDelete} item={contextMenu.item} x = {contextMenu.x} y = {contextMenu.y} closeContextMenu={contextMenuClose}/>}
           <div>
             <Search onSearch ={handleSearch}/>
             <Button className="w-10 m-0 p-0 h-8 md:w-24 md:h-10 fixed right-[60px] md:right-20 top-4 md:top-3 z-50 " onClick={() => {setReload(!reload)}}>
@@ -239,7 +261,7 @@ const DataLog = () => {
                   (
                     <>
                       {data.map((item) => (
-                        <TableRow key = {item.id}>
+                        <TableRow onContextMenu={handleTableRowContextMenu(item)} key = {item.id}>
                           <TableCell className="font-medium">{item.id}</TableCell>
                           <TableCell className="whitespace-nowrap">{item.temp} *C</TableCell>
                           <TableCell>{item.humidity} %</TableCell>

@@ -2,10 +2,9 @@
 import { useEffect, useState } from "react";
 import FanControl from "./fan-control";
 import LightControl from "./light-control";
-import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
-import { useRouter } from "next/navigation";
 import { ToastAction } from "@radix-ui/react-toast";
+import { DataLog } from "./data";
 interface ControlData {
     id: number;
     device: string;
@@ -14,81 +13,36 @@ interface ControlData {
 }
 
 const Control = () => {
-    // const router = useRouter();
-    // const [control, setControl] = useState<ControlData>()
-    // const [lightStatus, setLightStatus] = useState<boolean>(false);
-    // const [fanStatus, setFanStatus] = useState<boolean>(false);
-    
-    // useEffect(() => {
-    //     const fetchData = async() =>  {
-    //         try {
-    //             const response = await axios.get("http://localhost:5000/api/controllog/first")
-    //             const data = response.data;
-    //             setControl(data)
-    //             setLightStatus(data?.lightStatus || false);
-    //             setFanStatus(data?.fanStatus || false);
-    //         } catch (error) {
-    //             toast({
-    //                 variant: "destructive",
-    //                 title: "Something went wrong",
-    //                 description: "Error call api control first status"
-    //             })
-    //         }
-            
-    //     }
-    //     fetchData();
-    //     return () => {
-      
-    //     }
-    // }, [])
-
-    // const handleClickToggleLight = async() => {
-    //     setLightStatus((prevValue) => !prevValue)
-    //     try{
-    //         const values : object = {
-    //             lightStatus: !lightStatus,
-    //             fanStatus: fanStatus,
-    //         }
-    //         await axios.post("http://localhost:5000/api/controllog", values)
-    //         toast({
-    //             description: "Success."
-    //         })
-    //     } catch(error) {
-    //         console.error(error)
-    //         toast({
-    //             variant: "destructive",
-    //             title: "Something went wrong",
-    //             description: "Error call api control light"
-    //         })
-    //     }
-    // }
-
-    // const handleCLickToggleFan = async() => {
-    //     setFanStatus((prevValue) => !prevValue)
-    //     try{
-    //         const values : object = {
-    //             lightStatus: lightStatus,
-    //             fanStatus: !fanStatus,
-    //         }
-    //         await axios.post("http://localhost:5000/api/controllog", values)
-    //         toast({
-    //             description: "Success."
-    //         })
-    //     } catch(error) {
-    //         console.error(error)
-    //         toast({
-    //             variant: "destructive",
-    //             title: "Something went wrong",
-    //             description: "Error call api control fan",
-    //             action: <ToastAction altText="Try again">Try again</ToastAction>,
-    //         })
-    //     }
-    // } 
+    const [dataLog, setDataLog] = useState<DataLog>({
+        temp: "0",
+        humidity: "0",
+        brightness: "0",
+        dust: "0",
+    }) ;
+    useEffect(() => {
+        const eventSource = new EventSource('http://localhost:5000/sse/connect');
+        eventSource.onmessage = (event) => {
+          try {
+            const newData = JSON.parse(event.data);
+            setDataLog(newData);
+          } catch (error) {
+            toast({
+              variant: "destructive",
+              title: "Some thing went wrong",
+              description: "Error connect get datasensor",
+              action: <ToastAction altText="Try again">Try again</ToastAction>,
+            });
+          }
+        };
+        return () => {
+          eventSource.close();
+        }
+      }, []);
 
     return ( 
         <>
-            <LightControl/>
-            <FanControl/>
+            <LightControl dust = {dataLog.dust}/>
+            <FanControl dust = {dataLog.dust}/>
         </>
     );
 }

@@ -7,12 +7,12 @@ import { Fan } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface FanControlProps {
-    status?: boolean,
-    onHandle?: () => void
+    dust: string;
 }
 
-const FanControl = () => {
+const FanControl = ({dust} : FanControlProps) => {
     const [isOn, setIsOn] = useState<boolean>(false)
+    const [lastStatus, setLastStatus] = useState<boolean>(false);
 
     const toggleSwitch = () => {
         
@@ -62,6 +62,51 @@ const FanControl = () => {
             })
         }
     } 
+    const handleLastStatus = async(lastStatus: boolean | null) => {
+        if (lastStatus !== null) {
+            setIsOn(lastStatus);
+            const values : object = {
+                device: "fan",
+                status: lastStatus,
+            }
+            await axios.post("http://localhost:5000/api/controllog", values)
+        } else {
+            setIsOn((prevValue) => !prevValue)
+            try{
+                const values : object = {
+                    device: "fan",
+                    status: !isOn,
+                }
+                await axios.post("http://localhost:5000/api/controllog", values)
+            } catch(error) {
+                console.error(error)
+                toast({
+                    variant: "destructive",
+                    title: "Something went wrong",
+                    description: "Error call api control Light",
+                    action: <ToastAction altText="Try again">Try again</ToastAction>,
+                })
+            }
+        }
+    }
+
+    // useEffect(() => {
+    //     setLastStatus(isOn);
+    //     if(+dust > 70) {
+    //         const interval = setInterval(() => {
+    //             handleLastStatus(null);
+    //         }, 50)
+
+    //         return () => {
+    //             clearInterval(interval);
+    //         };
+    //     } else {
+    //         if (lastStatus !== null) {
+    //             setIsOn(lastStatus);
+    //             handleLastStatus(lastStatus)
+    //         }
+    //     }
+    //   }, [dust]);
 
     return (
         <div className="

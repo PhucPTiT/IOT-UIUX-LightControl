@@ -10,7 +10,7 @@ import { ToastAction } from "@/components/ui/toast";
 import Dust from "./dust";
 import { getRandomDust } from "../utils/random";
 
-interface DataLog {
+export interface DataLog {
     temp: string,
     humidity: string,
     brightness: string,
@@ -47,21 +47,6 @@ const Data = () => {
         try {
           const newData = JSON.parse(event.data);
           setDataLog(newData);
-          // Kiểm tra nếu nhận được thông báo kết nối lại từ máy chủ
-          // if (newData === 'RECONNECT') {
-          //   setReconnecting(true);
-          //   eventSource.close(); 
-          //   const newEventSource = new EventSource('http://localhost:5000/sse/connect');
-          //   newEventSource.onmessage = (newEvent) => {
-          //     try {
-          //       const newData = JSON.parse(newEvent.data);
-          //       setDataLog(newData);
-          //       setReconnecting(false); 
-          //     } catch (error) {
-
-          //     }
-          //   };
-          // }
         } catch (error) {
           toast({
             variant: "destructive",
